@@ -8,10 +8,7 @@ struct HomeView: View {
     @State private var customNamePending: String?
     @State private var customProteinText = ""
 
-    private let favouriteColumns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
+    private let favouriteColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
 
     var body: some View {
         ScrollView {
@@ -104,32 +101,10 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader("Quick add", subtitle: "One tap. Under 10 seconds.")
 
-            LazyVGrid(columns: favouriteColumns, spacing: 12) {
+            LazyVGrid(columns: favouriteColumns, spacing: 8) {
                 ForEach(viewModel.favourites) { item in
                     QuickAddTile(item: item) {
                         viewModel.add(item)
-                    }
-                }
-            }
-
-            GlassEffectContainer(spacing: 12) {
-                HStack(spacing: 12) {
-                    ForEach(viewModel.quickAmounts, id: \.self) { amount in
-                        Button {
-                            viewModel.addAmount(amount)
-                        } label: {
-                            VStack(spacing: 2) {
-                                Text("+\(amount)")
-                                    .font(.title2.weight(.bold))
-                                Text("grams")
-                                    .font(.caption2)
-                                    .foregroundStyle(AppTheme.ink.opacity(0.5))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                        }
-                        .buttonStyle(.glass)
-                        .tint(AppTheme.emerald)
                     }
                 }
             }

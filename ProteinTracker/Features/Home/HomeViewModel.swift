@@ -7,7 +7,6 @@ final class HomeViewModel {
     let customFoods: CustomFoodDirectory
     var draft: String = ""
 
-    let quickAmounts: [Int] = [20, 30, 40]
     let favourites: [QuickAddItem] = QuickAddItem.favourites
 
     init(store: ProteinStore, customFoods: CustomFoodDirectory = CustomFoodDirectory()) {
@@ -48,10 +47,6 @@ final class HomeViewModel {
     }
 
     // MARK: - Logging
-
-    func addAmount(_ grams: Int) {
-        store.add(ProteinEntry(name: "Quick add", grams: grams))
-    }
 
     func add(_ item: QuickAddItem) {
         store.add(ProteinEntry(name: item.name, grams: item.grams))
