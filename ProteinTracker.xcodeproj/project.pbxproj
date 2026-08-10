@@ -7,17 +7,45 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0612C3846887FBA5771C2129 /* ProteinEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6C0CD5C86923AD56705624 /* ProteinEntry.swift */; };
 		0992D93DAE0A3E49BB74DB59 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE9419B673BCAB26CA7E0D4 /* HomeViewModel.swift */; };
 		1296DF190D322AD19ACF2319 /* ProteinTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DA3C2F247A8E2213767105 /* ProteinTrackerApp.swift */; };
+		19CBCA99F8AAF4B555ACB9BC /* QuickAddItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89FBDBEE2D4BE3411921BD8 /* QuickAddItem.swift */; };
 		78E22D6EC125AD2C5560D8D2 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC2EC3A7F04E13BF82FE84E /* HomeView.swift */; };
+		7EFC3EFC9255C7D6B3C31089 /* ProteinRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE5C14B3453021FA1634D76 /* ProteinRingView.swift */; };
+		80CA5A624E8FBB1224CC300E /* QuickAddRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5615B5403FBF14F50D18AF /* QuickAddRow.swift */; };
+		9F2DC463FD6464C79B3DD095 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F840DD06022B8578E8A2AE37 /* SettingsView.swift */; };
+		A2883ABF526129CE4277CB80 /* DayTotal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29AB80FAEFA93EB935210F8 /* DayTotal.swift */; };
+		B00CC2FCD2B499925C6EDC98 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D37081B498B6BA771C6FB99 /* RootView.swift */; };
+		B6E5FDA59190FBFFB525C809 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533B593C8D0CA4C298DC2A50 /* AppTheme.swift */; };
+		BADB02E9DBF1268FDA89CCE7 /* ProteinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5CFA3724850AA187A87F8D /* ProteinStore.swift */; };
+		C84A666459CD12581912E2AD /* LoggedEntryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B46035335051ECFF70348C /* LoggedEntryRow.swift */; };
 		D3CFEE5C5B9AE23B129373BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA7CEDC0D550B559F5ED095B /* Assets.xcassets */; };
+		D44046B06558D531E88B5A38 /* StatTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8B3E28E613F6DCB5F720C2 /* StatTile.swift */; };
+		E2B98B3A64AD1014EAF5196B /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C44E3CA16D10B4D0A41234 /* SettingsViewModel.swift */; };
+		E386155394D7FFBFB84E281D /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E56626BF4C208607A1B2C6B /* StatsView.swift */; };
+		FBD4282AB6F36C973C186970 /* StatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229D951962382389020C158C /* StatsViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0B8B3E28E613F6DCB5F720C2 /* StatTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTile.swift; sourceTree = "<group>"; };
+		0D6C0CD5C86923AD56705624 /* ProteinEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinEntry.swift; sourceTree = "<group>"; };
+		229D951962382389020C158C /* StatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViewModel.swift; sourceTree = "<group>"; };
 		3CE9419B673BCAB26CA7E0D4 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		4E56626BF4C208607A1B2C6B /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		533B593C8D0CA4C298DC2A50 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		65C44E3CA16D10B4D0A41234 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		88B46035335051ECFF70348C /* LoggedEntryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedEntryRow.swift; sourceTree = "<group>"; };
+		8D37081B498B6BA771C6FB99 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		BA7CEDC0D550B559F5ED095B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BC5615B5403FBF14F50D18AF /* QuickAddRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddRow.swift; sourceTree = "<group>"; };
 		C06812F5BE7EA300B0A007C3 /* ProteinTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ProteinTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1DA3C2F247A8E2213767105 /* ProteinTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinTrackerApp.swift; sourceTree = "<group>"; };
+		C29AB80FAEFA93EB935210F8 /* DayTotal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTotal.swift; sourceTree = "<group>"; };
+		D89FBDBEE2D4BE3411921BD8 /* QuickAddItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddItem.swift; sourceTree = "<group>"; };
+		DCE5C14B3453021FA1634D76 /* ProteinRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinRingView.swift; sourceTree = "<group>"; };
+		EA5CFA3724850AA187A87F8D /* ProteinStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinStore.swift; sourceTree = "<group>"; };
+		F840DD06022B8578E8A2AE37 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FEC2EC3A7F04E13BF82FE84E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -27,8 +55,19 @@
 			children = (
 				FEC2EC3A7F04E13BF82FE84E /* HomeView.swift */,
 				3CE9419B673BCAB26CA7E0D4 /* HomeViewModel.swift */,
+				732DAE85628E62091DE03516 /* Components */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		28DAAD798C9C5DEDCD5A9C3D /* Stats */ = {
+			isa = PBXGroup;
+			children = (
+				4E56626BF4C208607A1B2C6B /* StatsView.swift */,
+				229D951962382389020C158C /* StatsViewModel.swift */,
+				50DD28D6F418986EF3AE5013 /* Components */,
+			);
+			path = Stats;
 			sourceTree = "<group>";
 		};
 		4A59AAF95DC5DC4B5ED76D6E /* ProteinTracker */ = {
@@ -36,17 +75,68 @@
 			children = (
 				BA7CEDC0D550B559F5ED095B /* Assets.xcassets */,
 				C1DA3C2F247A8E2213767105 /* ProteinTrackerApp.swift */,
+				8D37081B498B6BA771C6FB99 /* RootView.swift */,
 				81A26A4BC94D51DBA9029080 /* Features */,
+				F3D2AB8FB3392DCCC28D1960 /* Models */,
+				BE59E7624D8574FF588F5C31 /* Shared */,
 			);
 			path = ProteinTracker;
+			sourceTree = "<group>";
+		};
+		50DD28D6F418986EF3AE5013 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				0B8B3E28E613F6DCB5F720C2 /* StatTile.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		5C1E69669E433EC3ABC66227 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F840DD06022B8578E8A2AE37 /* SettingsView.swift */,
+				65C44E3CA16D10B4D0A41234 /* SettingsViewModel.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		732DAE85628E62091DE03516 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				88B46035335051ECFF70348C /* LoggedEntryRow.swift */,
+				DCE5C14B3453021FA1634D76 /* ProteinRingView.swift */,
+				BC5615B5403FBF14F50D18AF /* QuickAddRow.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		81A26A4BC94D51DBA9029080 /* Features */ = {
 			isa = PBXGroup;
 			children = (
 				0047825D3B6A22302F0EC783 /* Home */,
+				5C1E69669E433EC3ABC66227 /* Settings */,
+				28DAAD798C9C5DEDCD5A9C3D /* Stats */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		BE59E7624D8574FF588F5C31 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				533B593C8D0CA4C298DC2A50 /* AppTheme.swift */,
+				EA5CFA3724850AA187A87F8D /* ProteinStore.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		F3D2AB8FB3392DCCC28D1960 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C29AB80FAEFA93EB935210F8 /* DayTotal.swift */,
+				0D6C0CD5C86923AD56705624 /* ProteinEntry.swift */,
+				D89FBDBEE2D4BE3411921BD8 /* QuickAddItem.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		F4E9DC90292325928149D73C = {
@@ -130,9 +220,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6E5FDA59190FBFFB525C809 /* AppTheme.swift in Sources */,
+				A2883ABF526129CE4277CB80 /* DayTotal.swift in Sources */,
 				78E22D6EC125AD2C5560D8D2 /* HomeView.swift in Sources */,
 				0992D93DAE0A3E49BB74DB59 /* HomeViewModel.swift in Sources */,
+				C84A666459CD12581912E2AD /* LoggedEntryRow.swift in Sources */,
+				0612C3846887FBA5771C2129 /* ProteinEntry.swift in Sources */,
+				7EFC3EFC9255C7D6B3C31089 /* ProteinRingView.swift in Sources */,
+				BADB02E9DBF1268FDA89CCE7 /* ProteinStore.swift in Sources */,
 				1296DF190D322AD19ACF2319 /* ProteinTrackerApp.swift in Sources */,
+				19CBCA99F8AAF4B555ACB9BC /* QuickAddItem.swift in Sources */,
+				80CA5A624E8FBB1224CC300E /* QuickAddRow.swift in Sources */,
+				B00CC2FCD2B499925C6EDC98 /* RootView.swift in Sources */,
+				9F2DC463FD6464C79B3DD095 /* SettingsView.swift in Sources */,
+				E2B98B3A64AD1014EAF5196B /* SettingsViewModel.swift in Sources */,
+				D44046B06558D531E88B5A38 /* StatTile.swift in Sources */,
+				E386155394D7FFBFB84E281D /* StatsView.swift in Sources */,
+				FBD4282AB6F36C973C186970 /* StatsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

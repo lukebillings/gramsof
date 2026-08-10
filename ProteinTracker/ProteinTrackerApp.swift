@@ -2,11 +2,11 @@ import SwiftUI
 
 @main
 struct ProteinTrackerApp: App {
-    @State private var homeViewModel = HomeViewModel()
+    @State private var store = ProteinStore.seeded
 
     var body: some Scene {
         WindowGroup {
-            HomeView(viewModel: homeViewModel)
+            RootView(store: store)
         }
     }
 }
