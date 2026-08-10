@@ -1,0 +1,41 @@
+import Foundation
+
+struct FoodItem: Identifiable, Hashable {
+    let name: String
+    let proteinPer100g: Double
+    let servingGrams: Double
+    let servingLabel: String
+    /// Set when the food is naturally counted rather than weighed, so "2 eggs"
+    /// can read back as "2 eggs" instead of "2 x 50g".
+    let countUnit: String?
+    /// Weight of a single countable unit, when the default portion is more than one.
+    private let unitGrams: Double?
+    let aliases: [String]
+
+    var id: String { name }
+
+    /// Weight to multiply by when the user types a count.
+    var countGrams: Double { unitGrams ?? servingGrams }
+
+    init(
+        _ name: String,
+        protein proteinPer100g: Double,
+        serving servingGrams: Double,
+        label servingLabel: String,
+        unit countUnit: String? = nil,
+        unitGrams: Double? = nil,
+        aliases: [String] = []
+    ) {
+        self.name = name
+        self.proteinPer100g = proteinPer100g
+        self.servingGrams = servingGrams
+        self.servingLabel = servingLabel
+        self.countUnit = countUnit
+        self.unitGrams = unitGrams
+        self.aliases = aliases
+    }
+
+    func protein(forGrams grams: Double) -> Int {
+        Int((proteinPer100g * grams / 100).rounded())
+    }
+}

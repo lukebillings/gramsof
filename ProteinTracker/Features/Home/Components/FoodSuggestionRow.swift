@@ -1,24 +1,29 @@
 import SwiftUI
 
-struct QuickAddRow: View {
-    let item: QuickAddItem
+struct FoodSuggestionRow: View {
+    let suggestion: FoodSuggestion
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
+                Text(suggestion.emoji)
+                    .font(.title3)
+                    .frame(width: 38, height: 38)
+                    .background(AppTheme.mint.opacity(0.45), in: .circle)
+
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(item.name)
+                    Text(suggestion.name)
                         .font(.body.weight(.semibold))
                         .foregroundStyle(AppTheme.ink)
-                    Text(item.detail)
+                    Text(suggestion.portionLabel)
                         .font(.caption)
                         .foregroundStyle(AppTheme.ink.opacity(0.5))
                 }
 
                 Spacer(minLength: 8)
 
-                Text("\(item.grams)g")
+                Text("+\(suggestion.grams)g")
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(AppTheme.forest)
                     .padding(.horizontal, 12)
@@ -31,12 +36,16 @@ struct QuickAddRow: View {
         }
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 20))
-        .accessibilityLabel("Add \(item.name), \(item.grams) grams")
+        .accessibilityLabel("Log \(suggestion.name), \(suggestion.portionLabel), \(suggestion.grams) grams of protein")
     }
 }
 
 #Preview {
-    QuickAddRow(item: QuickAddItem.favourites[0]) {}
-        .padding()
-        .background(AppTheme.background)
+    VStack(spacing: 10) {
+        ForEach(FoodLookup.suggestions(for: "chicken")) { suggestion in
+            FoodSuggestionRow(suggestion: suggestion) {}
+        }
+    }
+    .padding()
+    .background(AppTheme.background)
 }

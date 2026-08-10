@@ -26,6 +26,11 @@ final class ProteinStore {
         entries.removeAll { $0.id == entry.id }
     }
 
+    func updateGrams(for entry: ProteinEntry, to grams: Int) {
+        guard grams > 0, let index = entries.firstIndex(where: { $0.id == entry.id }) else { return }
+        entries[index].grams = grams
+    }
+
     // MARK: - Today
 
     var todayEntries: [ProteinEntry] {

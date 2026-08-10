@@ -4,13 +4,15 @@ import Observation
 @Observable
 final class HomeViewModel {
     let store: ProteinStore
+    let customFoods: CustomFoodDirectory
     var draft: String = ""
 
     let quickAmounts: [Int] = [20, 30, 40]
     let favourites: [QuickAddItem] = QuickAddItem.favourites
 
-    init(store: ProteinStore) {
+    init(store: ProteinStore, customFoods: CustomFoodDirectory = CustomFoodDirectory()) {
         self.store = store
+        self.customFoods = customFoods
     }
 
     var goal: Int { store.dailyGoal }
@@ -25,8 +27,24 @@ final class HomeViewModel {
         return Double(store.todayTotal) / Double(store.dailyGoal)
     }
 
+    var suggestions: [FoodSuggestion] {
+        FoodLookup.suggestions(for: draft, including: customFoods.foodItems)
+    }
+
+    /// Shown under search results so the user can save an unknown food.
+    var customFoodCandidate: String? {
+        guard let name = FoodLookup.customNameCandidate(in: draft) else { return nil }
+
+        // Hide when the top suggestion is already an exact match for that name.
+        if let top = suggestions.first, top.name.compare(name, options: .caseInsensitive) == .orderedSame {
+            return nil
+        }
+
+        return name
+    }
+
     var canSubmitDraft: Bool {
-        parse(draft) != nil
+        !suggestions.isEmpty || parse(draft) != nil
     }
 
     // MARK: - Logging
@@ -40,13 +58,33 @@ final class HomeViewModel {
     }
 
     func submitDraft() {
+        if let suggestion = suggestions.first {
+            log(suggestion)
+            return
+        }
+
         guard let parsed = parse(draft) else { return }
         store.add(ProteinEntry(name: parsed.name, grams: parsed.grams))
         draft = ""
     }
 
+    func log(_ suggestion: FoodSuggestion) {
+        store.add(ProteinEntry(name: suggestion.name, grams: suggestion.grams))
+        draft = ""
+    }
+
+    func addCustomFood(named name: String, proteinGrams: Int) {
+        let food = customFoods.upsert(name: name, proteinGrams: proteinGrams)
+        store.add(ProteinEntry(name: food.name, grams: food.proteinGrams))
+        draft = ""
+    }
+
     func delete(_ entry: ProteinEntry) {
         store.remove(entry)
+    }
+
+    func updateGrams(for entry: ProteinEntry, to grams: Int) {
+        store.updateGrams(for: entry, to: grams)
     }
 
     /// Accepts free text like "chicken 40", "40 chicken" or just "40".

@@ -7,11 +7,14 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section("Daily goal") {
-                    Stepper(value: $viewModel.dailyGoal, in: viewModel.goalRange, step: 5) {
-                        HStack {
-                            Text("Protein target")
-                            Spacer()
-                            Text("\(viewModel.dailyGoal)g")
+                    LabeledContent("Protein target") {
+                        HStack(spacing: 4) {
+                            TextField("150", value: $viewModel.dailyGoal, format: .number)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(minWidth: 56, alignment: .trailing)
+
+                            Text("g")
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -31,17 +34,30 @@ struct SettingsView: View {
                     }
                 }
 
+                Section {
+                    LabeledContent("Your goal", value: viewModel.onboardingGoalName)
+
+                    Button("Restart onboarding") {
+                        viewModel.restartOnboarding()
+                    }
+                } header: {
+                    Text("Onboarding")
+                } footer: {
+                    Text("Runs you back through goal setup and the plan options. Your logged entries stay where they are.")
+                }
+
                 Section("About") {
                     LabeledContent("Version", value: "1.0")
                 }
             }
             .scrollContentBackground(.hidden)
             .background(AppTheme.background)
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Settings")
         }
     }
 }
 
 #Preview {
-    SettingsView(viewModel: SettingsViewModel(store: .seeded))
+    SettingsView(viewModel: SettingsViewModel(store: .seeded, onboarding: .preview))
 }

@@ -13,6 +13,8 @@ struct QuickAddItem: Identifiable, Hashable {
         self.grams = grams
     }
 
+    var emoji: String { FoodEmoji.forFood(named: name) }
+
     static let favourites: [QuickAddItem] = [
         QuickAddItem(name: "Greek yogurt", detail: "170g pot", grams: 17),
         QuickAddItem(name: "Chicken breast", detail: "120g", grams: 36),

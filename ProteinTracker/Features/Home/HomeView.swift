@@ -3,23 +3,76 @@ import SwiftUI
 struct HomeView: View {
     @Bindable var viewModel: HomeViewModel
     @FocusState private var isDraftFocused: Bool
+    @State private var entryBeingEdited: ProteinEntry?
+    @State private var editedGramsText = ""
+    @State private var customNamePending: String?
+    @State private var customProteinText = ""
+
+    private let favouriteColumns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    ringCard
-                    quickAddSection
-                    typeToLogSection
-                    todaySection
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 32)
+        ScrollView {
+            VStack(spacing: 24) {
+                title
+                ringCard
+                quickAddSection
+                searchSection
+                todaySection
             }
-            .background(AppTheme.background)
-            .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("Today")
+            .padding(.horizontal, 20)
+            .padding(.top, 4)
+            .padding(.bottom, 32)
         }
+        .background(AppTheme.background)
+        .scrollDismissesKeyboard(.interactively)
+        .alert("Edit grams", isPresented: Binding(
+            get: { entryBeingEdited != nil },
+            set: { if !$0 { entryBeingEdited = nil } }
+        )) {
+            TextField("Grams", text: $editedGramsText)
+                .keyboardType(.numberPad)
+
+            Button("Save") {
+                saveEditedGrams()
+            }
+
+            Button("Cancel", role: .cancel) {
+                entryBeingEdited = nil
+            }
+        } message: {
+            if let entry = entryBeingEdited {
+                Text("Update protein for \(entry.name).")
+            }
+        }
+        .alert("Protein in this food", isPresented: Binding(
+            get: { customNamePending != nil },
+            set: { if !$0 { customNamePending = nil } }
+        )) {
+            TextField("Protein grams", text: $customProteinText)
+                .keyboardType(.numberPad)
+
+            Button("Add") {
+                saveCustomFood()
+            }
+
+            Button("Cancel", role: .cancel) {
+                customNamePending = nil
+            }
+        } message: {
+            if let name = customNamePending {
+                Text("How much protein is in one serving of \(name)?")
+            }
+        }
+    }
+
+    private var title: some View {
+        Text("Log Protein")
+            .font(.largeTitle.bold())
+            .foregroundStyle(AppTheme.ink)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Ring
@@ -51,6 +104,14 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader("Quick add", subtitle: "One tap. Under 10 seconds.")
 
+            LazyVGrid(columns: favouriteColumns, spacing: 12) {
+                ForEach(viewModel.favourites) { item in
+                    QuickAddTile(item: item) {
+                        viewModel.add(item)
+                    }
+                }
+            }
+
             GlassEffectContainer(spacing: 12) {
                 HStack(spacing: 12) {
                     ForEach(viewModel.quickAmounts, id: \.self) { amount in
@@ -72,25 +133,17 @@ struct HomeView: View {
                     }
                 }
             }
-
-            VStack(spacing: 10) {
-                ForEach(viewModel.favourites) { item in
-                    QuickAddRow(item: item) {
-                        viewModel.add(item)
-                    }
-                }
-            }
         }
     }
 
-    // MARK: - Type to log
+    // MARK: - Search
 
-    private var typeToLogSection: some View {
+    private var searchSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Start typing", subtitle: "Try “chicken 40” or just “30”.")
+            sectionHeader("Add by searching", subtitle: "Try “chicken”, “2 eggs” or “200g salmon”.")
 
             HStack(spacing: 10) {
-                TextField("Add food and grams", text: $viewModel.draft)
+                TextField("Search foods", text: $viewModel.draft)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .submitLabel(.done)
@@ -113,6 +166,49 @@ struct HomeView: View {
                 .disabled(!viewModel.canSubmitDraft)
                 .accessibilityLabel("Log entry")
             }
+
+            if !viewModel.suggestions.isEmpty || viewModel.customFoodCandidate != nil {
+                VStack(spacing: 10) {
+                    ForEach(viewModel.suggestions) { suggestion in
+                        FoodSuggestionRow(suggestion: suggestion) {
+                            viewModel.log(suggestion)
+                        }
+                    }
+
+                    if let customName = viewModel.customFoodCandidate {
+                        Button {
+                            isDraftFocused = false
+                            customProteinText = ""
+                            customNamePending = customName
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(AppTheme.emerald)
+                                    .frame(width: 38, height: 38)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Add “\(customName)” as custom")
+                                        .font(.body.weight(.semibold))
+                                        .foregroundStyle(AppTheme.ink)
+                                        .multilineTextAlignment(.leading)
+
+                                    Text("Save it to your food directory")
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.ink.opacity(0.5))
+                                }
+
+                                Spacer(minLength: 0)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .contentShape(.rect)
+                        }
+                        .buttonStyle(.plain)
+                        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 20))
+                    }
+                }
+            }
         }
     }
 
@@ -120,7 +216,7 @@ struct HomeView: View {
 
     private var todaySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Today's log", subtitle: nil)
+            sectionHeader("Today's log", subtitle: "Tap the grams to edit.")
 
             if viewModel.todayEntries.isEmpty {
                 Text("Nothing logged yet.")
@@ -132,12 +228,18 @@ struct HomeView: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(viewModel.todayEntries) { entry in
-                        LoggedEntryRow(entry: entry)
-                            .contextMenu {
-                                Button("Delete", systemImage: "trash", role: .destructive) {
-                                    viewModel.delete(entry)
-                                }
+                        LoggedEntryRow(entry: entry) {
+                            beginEditing(entry)
+                        }
+                        .contextMenu {
+                            Button("Edit grams", systemImage: "pencil") {
+                                beginEditing(entry)
                             }
+
+                            Button("Delete", systemImage: "trash", role: .destructive) {
+                                viewModel.delete(entry)
+                            }
+                        }
 
                         if entry != viewModel.todayEntries.last {
                             Divider().padding(.leading, 16)
@@ -161,6 +263,37 @@ struct HomeView: View {
                     .foregroundStyle(AppTheme.ink.opacity(0.5))
             }
         }
+    }
+
+    private func beginEditing(_ entry: ProteinEntry) {
+        editedGramsText = "\(entry.grams)"
+        entryBeingEdited = entry
+    }
+
+    private func saveEditedGrams() {
+        guard let entry = entryBeingEdited,
+              let grams = Int(editedGramsText.trimmingCharacters(in: .whitespacesAndNewlines)),
+              grams > 0
+        else {
+            entryBeingEdited = nil
+            return
+        }
+
+        viewModel.updateGrams(for: entry, to: grams)
+        entryBeingEdited = nil
+    }
+
+    private func saveCustomFood() {
+        guard let name = customNamePending,
+              let grams = Int(customProteinText.trimmingCharacters(in: .whitespacesAndNewlines)),
+              grams > 0
+        else {
+            customNamePending = nil
+            return
+        }
+
+        viewModel.addCustomFood(named: name, proteinGrams: grams)
+        customNamePending = nil
     }
 }
 

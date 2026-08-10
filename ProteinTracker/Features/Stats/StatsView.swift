@@ -45,7 +45,7 @@ struct StatsView: View {
     private var chartCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("Daily protein")
+                Text(viewModel.range == .month ? "Month at a glance" : "Daily protein")
                     .font(.headline)
                     .foregroundStyle(AppTheme.ink)
 
@@ -56,34 +56,40 @@ struct StatsView: View {
                     .foregroundStyle(AppTheme.ink.opacity(0.5))
             }
 
-            Chart {
-                ForEach(viewModel.totals) { day in
-                    BarMark(
-                        x: .value("Day", day.date, unit: .day),
-                        y: .value("Grams", day.grams)
-                    )
-                    .foregroundStyle(AppTheme.barGradient)
-                    .cornerRadius(6)
-                }
-
-                RuleMark(y: .value("Goal", viewModel.goal))
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                    .foregroundStyle(AppTheme.forest.opacity(0.5))
+            if viewModel.range == .month {
+                MonthHeatmapView(totals: viewModel.totals, goal: viewModel.goal)
+            } else {
+                weekChart
             }
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day, count: viewModel.range == .week ? 1 : 7)) { value in
-                    AxisValueLabel(
-                        format: .dateTime.weekday(viewModel.range == .week ? .narrow : .abbreviated)
-                    )
-                }
-            }
-            .chartYAxis {
-                AxisMarks(position: .leading)
-            }
-            .frame(height: 240)
         }
         .padding(18)
         .glassEffect(.regular, in: .rect(cornerRadius: 28))
+    }
+
+    private var weekChart: some View {
+        Chart {
+            ForEach(viewModel.totals) { day in
+                BarMark(
+                    x: .value("Day", day.date, unit: .day),
+                    y: .value("Grams", day.grams)
+                )
+                .foregroundStyle(AppTheme.barGradient)
+                .cornerRadius(6)
+            }
+
+            RuleMark(y: .value("Goal", viewModel.goal))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                .foregroundStyle(AppTheme.forest.opacity(0.5))
+        }
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day)) { _ in
+                AxisValueLabel(format: .dateTime.weekday(.narrow))
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .leading)
+        }
+        .frame(height: 240)
     }
 }
 

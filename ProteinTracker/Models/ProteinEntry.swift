@@ -12,4 +12,6 @@ struct ProteinEntry: Identifiable, Hashable {
         self.grams = grams
         self.loggedAt = loggedAt
     }
+
+    var emoji: String { FoodEmoji.forFood(named: name) }
 }
