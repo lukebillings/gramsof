@@ -129,7 +129,7 @@ struct HomeView: View {
 
     private var quickAddSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Quick add", subtitle: "One tap. Under 10 seconds.")
+            sectionHeader("Quick add", subtitle: "Tap to add")
 
             LazyVGrid(columns: favouriteColumns, spacing: 8) {
                 ForEach(viewModel.favourites) { item in

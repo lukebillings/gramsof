@@ -18,8 +18,9 @@ enum FoodEmoji {
         (["peanut", "almond", "cashew", "pistachio", "walnut", "nut"], "🥜"),
         (["bar", "chocolate"], "🍫"),
         (["oat", "porridge", "granola", "cereal", "muesli"], "🌾"),
-        (["bread", "toast", "sandwich", "wrap", "bagel"], "🥪"),
+        (["bread", "toast", "sandwich", "wrap", "bagel", "sourdough", "rye", "pitta", "pita", "naan", "ciabatta", "brioche", "crumpet", "baguette", "granary", "muffin"], "🥪"),
         (["rice", "pasta", "noodle", "quinoa"], "🍚"),
+        (["broccoli", "spinach", "kale", "carrot", "pea", "corn", "mushroom", "tomato", "cucumber", "pepper", "onion", "lettuce", "salad", "cabbage", "cauliflower", "asparagus", "courgette", "zucchini", "bean", "sprout", "aubergine", "squash", "leek", "celery", "beet", "parsnip", "rocket", "pak choi", "bok"], "🥬"),
         (["quick add"], "⚡️")
     ]
 

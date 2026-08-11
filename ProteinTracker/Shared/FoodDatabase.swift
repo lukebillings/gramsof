@@ -3,7 +3,7 @@ import Foundation
 /// Built-in protein reference. Values are grams of protein per 100g of food as
 /// eaten, rounded to the nearest sensible figure, with a typical UK portion.
 enum FoodDatabase {
-    static let all: [FoodItem] = meat + fish + eggsAndDairy + supplements + plantProtein + grains + everydayExtras
+    static let all: [FoodItem] = meat + fish + eggsAndDairy + supplements + plantProtein + grains + breads + vegetables + everydayExtras
 
     // MARK: - Meat
 
@@ -120,9 +120,6 @@ enum FoodDatabase {
         FoodItem("Muesli", protein: 10, serving: 50, label: "50g"),
         FoodItem("Weetabix", protein: 12, serving: 38, label: "2 biscuits", unit: "biscuit", unitGrams: 19),
         FoodItem("Bran flakes", protein: 10, serving: 40, label: "40g", aliases: ["cereal"]),
-        FoodItem("Wholemeal bread", protein: 9, serving: 40, label: "1 slice", unit: "slice", aliases: ["bread", "toast"]),
-        FoodItem("Bagel", protein: 10, serving: 85, label: "1 bagel", unit: "bagel"),
-        FoodItem("Wrap", protein: 9, serving: 60, label: "1 wrap", unit: "wrap", aliases: ["tortilla"]),
         FoodItem("Pasta", protein: 5, serving: 200, label: "200g cooked"),
         FoodItem("Rice", protein: 2.7, serving: 200, label: "200g cooked"),
         FoodItem("Quinoa", protein: 4.4, serving: 180, label: "180g cooked"),
@@ -133,14 +130,63 @@ enum FoodDatabase {
         FoodItem("Rice cakes", protein: 8, serving: 20, label: "2 cakes", unit: "cake", unitGrams: 10)
     ]
 
+    // MARK: - Breads
+
+    private static let breads: [FoodItem] = [
+        FoodItem("White bread", protein: 9, serving: 40, label: "1 slice", unit: "slice", aliases: ["bread", "toast", "white toast"]),
+        FoodItem("Wholemeal bread", protein: 9, serving: 40, label: "1 slice", unit: "slice", aliases: ["wholemeal", "whole wheat", "wholewheat", "brown bread", "brown toast"]),
+        FoodItem("Sourdough", protein: 9, serving: 50, label: "1 slice", unit: "slice", aliases: ["sourdough bread"]),
+        FoodItem("Rye bread", protein: 9, serving: 40, label: "1 slice", unit: "slice", aliases: ["rye", "dark rye"]),
+        FoodItem("Seeded bread", protein: 11, serving: 40, label: "1 slice", unit: "slice", aliases: ["seeded", "multigrain", "multigrain bread", "seeds bread"]),
+        FoodItem("Granary bread", protein: 10, serving: 40, label: "1 slice", unit: "slice", aliases: ["granary"]),
+        FoodItem("Brioche", protein: 8, serving: 40, label: "1 slice", unit: "slice", aliases: ["brioche bread"]),
+        FoodItem("Ciabatta", protein: 9, serving: 50, label: "1 roll", unit: "roll", aliases: ["ciabatta roll"]),
+        FoodItem("Baguette", protein: 9, serving: 50, label: "1 portion", unit: "portion", aliases: ["french stick"]),
+        FoodItem("Pitta", protein: 9, serving: 60, label: "1 pitta", unit: "pitta", aliases: ["pita", "pitta bread", "pita bread"]),
+        FoodItem("Naan", protein: 8, serving: 100, label: "1 naan", unit: "naan", aliases: ["naan bread"]),
+        FoodItem("Bagel", protein: 10, serving: 85, label: "1 bagel", unit: "bagel"),
+        FoodItem("Crumpet", protein: 6, serving: 55, label: "1 crumpet", unit: "crumpet"),
+        FoodItem("English muffin", protein: 9, serving: 60, label: "1 muffin", unit: "muffin", aliases: ["muffin"]),
+        FoodItem("Wrap", protein: 9, serving: 60, label: "1 wrap", unit: "wrap", aliases: ["tortilla", "tortilla wrap"]),
+        FoodItem("Gluten-free bread", protein: 4, serving: 40, label: "1 slice", unit: "slice", aliases: ["gluten free bread", "gf bread"])
+    ]
+
+    // MARK: - Vegetables
+
+    private static let vegetables: [FoodItem] = [
+        FoodItem("Broccoli", protein: 2.8, serving: 100, label: "100g"),
+        FoodItem("Spinach", protein: 2.9, serving: 80, label: "80g"),
+        FoodItem("Kale", protein: 2.9, serving: 80, label: "80g"),
+        FoodItem("Peas", protein: 5, serving: 80, label: "80g"),
+        FoodItem("Mangetout", protein: 2.8, serving: 80, label: "80g", aliases: ["snow peas", "sugar snap", "sugar snap peas"]),
+        FoodItem("Sweetcorn", protein: 3.3, serving: 80, label: "80g", aliases: ["corn"]),
+        FoodItem("Mushrooms", protein: 3.1, serving: 80, label: "80g"),
+        FoodItem("Carrot", protein: 0.9, serving: 80, label: "1 medium", unit: "carrot", aliases: ["carrots"]),
+        FoodItem("Courgette", protein: 1.2, serving: 100, label: "100g", aliases: ["zucchini"]),
+        FoodItem("Cauliflower", protein: 1.9, serving: 100, label: "100g"),
+        FoodItem("Cabbage", protein: 1.3, serving: 100, label: "100g"),
+        FoodItem("Brussels sprouts", protein: 3.5, serving: 80, label: "80g", aliases: ["sprouts", "brussel sprouts"]),
+        FoodItem("Green beans", protein: 1.8, serving: 80, label: "80g", aliases: ["runner beans", "french beans"]),
+        FoodItem("Asparagus", protein: 2.2, serving: 80, label: "80g"),
+        FoodItem("Tomato", protein: 0.9, serving: 100, label: "1 medium", unit: "tomato", aliases: ["tomatoes"]),
+        FoodItem("Cucumber", protein: 0.7, serving: 100, label: "100g"),
+        FoodItem("Pepper", protein: 0.9, serving: 100, label: "1 pepper", unit: "pepper", aliases: ["bell pepper", "capsicum", "red pepper"]),
+        FoodItem("Onion", protein: 1.1, serving: 80, label: "1 medium", unit: "onion", aliases: ["onions"]),
+        FoodItem("Leek", protein: 1.5, serving: 80, label: "80g", aliases: ["leeks"]),
+        FoodItem("Celery", protein: 0.7, serving: 80, label: "2 sticks", unit: "stick", unitGrams: 40),
+        FoodItem("Beetroot", protein: 1.6, serving: 80, label: "80g", aliases: ["beet"]),
+        FoodItem("Parsnip", protein: 1.2, serving: 100, label: "1 medium", unit: "parsnip", aliases: ["parsnips"]),
+        FoodItem("Aubergine", protein: 1.0, serving: 100, label: "100g", aliases: ["eggplant"]),
+        FoodItem("Butternut squash", protein: 1.0, serving: 100, label: "100g", aliases: ["squash", "pumpkin"]),
+        FoodItem("Lettuce", protein: 1.4, serving: 50, label: "50g", aliases: ["salad", "iceberg"]),
+        FoodItem("Rocket", protein: 2.6, serving: 40, label: "40g", aliases: ["arugula"]),
+        FoodItem("Mixed salad", protein: 1.5, serving: 80, label: "80g", aliases: ["salad leaves", "leafy salad"]),
+        FoodItem("Pak choi", protein: 1.5, serving: 80, label: "80g", aliases: ["bok choy", "bok choi"])
+    ]
+
     // MARK: - Everyday extras
 
     private static let everydayExtras: [FoodItem] = [
-        FoodItem("Broccoli", protein: 2.8, serving: 100, label: "100g"),
-        FoodItem("Spinach", protein: 2.9, serving: 80, label: "80g"),
-        FoodItem("Peas", protein: 5, serving: 80, label: "80g"),
-        FoodItem("Sweetcorn", protein: 3.3, serving: 80, label: "80g"),
-        FoodItem("Mushrooms", protein: 3.1, serving: 80, label: "80g"),
         FoodItem("Avocado", protein: 2, serving: 100, label: "1/2 avocado"),
         FoodItem("Banana", protein: 1.1, serving: 120, label: "1 banana", unit: "banana"),
         FoodItem("Apple", protein: 0.3, serving: 150, label: "1 apple", unit: "apple"),
