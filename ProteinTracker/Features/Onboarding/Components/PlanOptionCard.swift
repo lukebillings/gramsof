@@ -20,6 +20,7 @@ struct PlanOptionCard: View {
                 }
             }
             .padding(16)
+            .padding(.top, plan.badge == nil ? 0 : 6)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
@@ -27,6 +28,21 @@ struct PlanOptionCard: View {
         .overlay {
             RoundedRectangle(cornerRadius: 22)
                 .strokeBorder(AppTheme.emerald.opacity(isSelected ? 1 : 0), lineWidth: 2)
+        }
+        .overlay(alignment: .topTrailing) {
+            if let badge = plan.badge {
+                Text(badge)
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(AppTheme.forest)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(AppTheme.mint, in: .capsule)
+                    .overlay {
+                        Capsule()
+                            .strokeBorder(AppTheme.emerald.opacity(isSelected ? 0.55 : 0.25), lineWidth: 1)
+                    }
+                    .offset(x: -12, y: -10)
+            }
         }
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityLabel(accessibilityLabel)
@@ -41,20 +57,9 @@ struct PlanOptionCard: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
-                HStack(spacing: 8) {
-                    Text(plan.title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(AppTheme.ink.opacity(0.65))
-
-                    if let badge = plan.badge {
-                        Text(badge)
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(AppTheme.forest)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(AppTheme.mint, in: .capsule)
-                    }
-                }
+                Text(plan.title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.ink.opacity(0.65))
             }
 
             Spacer(minLength: 8)
@@ -76,36 +81,23 @@ struct PlanOptionCard: View {
 
     private var monthlyContent: some View {
         HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(plan.title)
-                    .font(.body.weight(.bold))
-                    .foregroundStyle(AppTheme.ink)
-
-                if let detail = plan.detail {
-                    Text(detail)
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(AppTheme.ink.opacity(0.5))
-                }
-            }
+            Text(plan.title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.ink.opacity(0.65))
 
             Spacer(minLength: 8)
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(plan.priceLabel)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(AppTheme.ink.opacity(0.45))
-
-                Text(plan.pricePeriod)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(AppTheme.ink.opacity(0.45))
-            }
+            Text(plan.priceSummary)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(AppTheme.ink.opacity(0.45))
+                .multilineTextAlignment(.trailing)
         }
     }
 
     private var accessibilityLabel: String {
         switch plan {
         case .annual:
-            return "7 days free trial, Annual, £49.99 per year"
+            return "7 days free trial, Yearly, Save 58% vs monthly, £49.99 per year"
         case .monthly:
             return "\(plan.title), \(plan.priceSummary)"
         }

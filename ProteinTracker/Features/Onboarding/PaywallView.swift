@@ -41,16 +41,17 @@ struct PaywallView: View {
             viewModel.backToGoal()
         } label: {
             Image(systemName: "chevron.left")
-                .font(.body.weight(.semibold))
-                .padding(6)
+                .font(.caption.weight(.semibold))
+                .padding(4)
         }
         .buttonStyle(.glass)
         .tint(AppTheme.emerald)
         .accessibilityLabel("Back to goals")
+        .controlSize(.small)
     }
 
     private var header: some View {
-        Text("Help hit your protein goals with Gramsof: Track Protein Intake")
+        Text("Help reach your protein goals with Gramsof: Track Protein Intake")
             .font(.system(size: 24, weight: .bold, design: .rounded))
             .foregroundStyle(AppTheme.ink)
             .fixedSize(horizontal: false, vertical: true)
@@ -58,34 +59,31 @@ struct PaywallView: View {
     }
 
     private var benefitsGrid: some View {
-        LazyVGrid(columns: columns, spacing: 12) {
+        LazyVGrid(columns: columns, spacing: 10) {
             ForEach(benefits) { benefit in
-                VStack(spacing: 12) {
+                VStack(spacing: 8) {
                     Image(systemName: benefit.symbol)
-                        .font(.title2.weight(.semibold))
+                        .font(.body.weight(.semibold))
                         .foregroundStyle(AppTheme.emerald)
-                        .frame(width: 44, height: 44)
+                        .frame(width: 32, height: 32)
                         .background(AppTheme.mint.opacity(0.7), in: .circle)
 
                     Text(benefit.title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(AppTheme.ink)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .frame(maxWidth: .infinity, minHeight: 120)
-                .padding(16)
-                .glassEffect(.regular, in: .rect(cornerRadius: 22))
+                .frame(maxWidth: .infinity, minHeight: 84)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 12)
+                .glassEffect(.regular, in: .rect(cornerRadius: 18))
             }
         }
     }
 
     private var plansSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Choose a plan")
-                .font(.title3.weight(.bold))
-                .foregroundStyle(AppTheme.ink)
-
             ForEach(viewModel.plans) { plan in
                 PlanOptionCard(plan: plan, isSelected: viewModel.selectedPlan == plan) {
                     viewModel.select(plan)
@@ -96,10 +94,15 @@ struct PaywallView: View {
 
     private var checkoutBar: some View {
         VStack(spacing: 10) {
-            Text(viewModel.selectedPlan.checkoutNote)
-                .font(.caption)
-                .foregroundStyle(AppTheme.ink.opacity(0.55))
-                .multilineTextAlignment(.center)
+            HStack(spacing: 6) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(AppTheme.emerald)
+                Text("Cancel anytime in Settings")
+                    .foregroundStyle(AppTheme.ink.opacity(0.55))
+            }
+            .font(.caption.weight(.medium))
+
+            legalSmallPrint
 
             Button {
                 viewModel.continueFromPaywall()
@@ -111,8 +114,6 @@ struct PaywallView: View {
             }
             .buttonStyle(.glassProminent)
             .tint(AppTheme.emerald)
-
-            legalSmallPrint
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
@@ -140,8 +141,15 @@ struct PaywallView: View {
             .tint(AppTheme.emerald.opacity(0.85))
             .minimumScaleFactor(0.8)
             .lineLimit(1)
+
+            Button("Restore purchases") {
+                Task { await viewModel.restorePurchases() }
+            }
+            .font(.caption2.weight(.medium))
+            .foregroundStyle(AppTheme.ink.opacity(0.45))
+            .buttonStyle(.plain)
         }
-        .padding(.top, 2)
+        .padding(.bottom, 2)
     }
 }
 

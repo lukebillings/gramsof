@@ -96,6 +96,9 @@ final class OnboardingViewModel {
         step = .dailyTarget
     }
 
+    /// StoreKit restore is not wired yet — placeholder for the paywall control.
+    func restorePurchases() async {}
+
     /// Purchases are not wired up yet, so this only records the choice and lets
     /// the user into the app.
     func finish() async {

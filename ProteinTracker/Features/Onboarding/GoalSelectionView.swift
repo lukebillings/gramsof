@@ -23,15 +23,9 @@ struct GoalSelectionView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Why do you want to track your protein?")
-                .font(.system(size: 34, weight: .bold, design: .rounded))
-                .foregroundStyle(AppTheme.ink)
-
-            Text("Tap the one that fits best. You can change it later in Settings.")
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.ink.opacity(0.55))
-        }
+        Text("Why do you want to track your protein?")
+            .font(.system(size: 34, weight: .bold, design: .rounded))
+            .foregroundStyle(AppTheme.ink)
     }
 }
 

@@ -16,7 +16,7 @@ enum SubscriptionPlan: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .annual: "Annual"
+        case .annual: "Yearly"
         case .monthly: "Monthly"
         }
     }
@@ -54,13 +54,13 @@ enum SubscriptionPlan: String, CaseIterable, Identifiable {
     var detail: String? {
         switch self {
         case .annual: "Works out at £4.17 a month"
-        case .monthly: "Billed every month"
+        case .monthly: nil
         }
     }
 
     var badge: String? {
         switch self {
-        case .annual: "Save 58%"
+        case .annual: "Save 58% vs monthly"
         case .monthly: nil
         }
     }
@@ -69,14 +69,6 @@ enum SubscriptionPlan: String, CaseIterable, Identifiable {
         switch self {
         case .annual: 7
         case .monthly: nil
-        }
-    }
-
-    /// Small print shown directly above the continue button.
-    var checkoutNote: String {
-        switch self {
-        case .annual: "7 days free, then £49.99 per year. Cancel anytime."
-        case .monthly: "£9.99 per month. Cancel anytime."
         }
     }
 }
