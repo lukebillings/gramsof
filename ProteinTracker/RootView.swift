@@ -9,18 +9,32 @@ struct RootView: View {
 
     private let store: ProteinStore
     private let onboarding: OnboardingState
+    private let appearance: AppearanceSettings
 
     @State private var homeViewModel: HomeViewModel
     @State private var statsViewModel: StatsViewModel
     @State private var settingsViewModel: SettingsViewModel
     @State private var selection: AppTab = .today
 
-    init(store: ProteinStore, onboarding: OnboardingState) {
+    init(
+        store: ProteinStore,
+        onboarding: OnboardingState,
+        customFoods: CustomFoodDirectory,
+        appearance: AppearanceSettings
+    ) {
         self.store = store
         self.onboarding = onboarding
-        _homeViewModel = State(initialValue: HomeViewModel(store: store))
+        self.appearance = appearance
+        _homeViewModel = State(initialValue: HomeViewModel(store: store, customFoods: customFoods))
         _statsViewModel = State(initialValue: StatsViewModel(store: store))
-        _settingsViewModel = State(initialValue: SettingsViewModel(store: store, onboarding: onboarding))
+        _settingsViewModel = State(
+            initialValue: SettingsViewModel(
+                store: store,
+                onboarding: onboarding,
+                customFoods: customFoods,
+                appearance: appearance
+            )
+        )
     }
 
     var body: some View {
@@ -32,6 +46,7 @@ struct RootView: View {
             }
         }
         .animation(.smooth(duration: 0.3), value: onboarding.hasCompleted)
+        .preferredColorScheme(appearance.preference.colorScheme)
     }
 
     private var tabs: some View {
@@ -54,5 +69,10 @@ struct RootView: View {
 }
 
 #Preview {
-    RootView(store: .seeded, onboarding: .preview)
+    RootView(
+        store: .seeded,
+        onboarding: .preview,
+        customFoods: .preview,
+        appearance: AppearanceSettings()
+    )
 }

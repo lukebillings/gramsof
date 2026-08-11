@@ -26,6 +26,15 @@ final class ProteinStore {
         entries.removeAll { $0.id == entry.id }
     }
 
+    func removeToday() {
+        let todayIDs = Set(todayEntries.map(\.id))
+        entries.removeAll { todayIDs.contains($0.id) }
+    }
+
+    func removeAllEntries() {
+        entries.removeAll()
+    }
+
     func updateGrams(for entry: ProteinEntry, to grams: Int) {
         guard grams > 0, let index = entries.firstIndex(where: { $0.id == entry.id }) else { return }
         entries[index].grams = grams

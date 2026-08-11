@@ -61,6 +61,11 @@ final class CustomFoodDirectory {
         return food
     }
 
+    func removeAll() {
+        foods = []
+        defaults.removeObject(forKey: Key.foods)
+    }
+
     private func persist() {
         guard let data = try? JSONEncoder().encode(foods) else { return }
         defaults.set(data, forKey: Key.foods)

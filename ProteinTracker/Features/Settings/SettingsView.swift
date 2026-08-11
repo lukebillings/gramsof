@@ -1,7 +1,11 @@
+import StoreKit
 import SwiftUI
 
 struct SettingsView: View {
     @Bindable var viewModel: SettingsViewModel
+    @Environment(\.requestReview) private var requestReview
+    @State private var confirmResetToday = false
+    @State private var confirmResetAll = false
 
     var body: some View {
         NavigationStack {
@@ -22,16 +26,51 @@ struct SettingsView: View {
                     Toggle("Show remaining on ring", isOn: $viewModel.showsRemainingOnRing)
                 }
 
+                Section("Appearance") {
+                    Picker(
+                        "Theme",
+                        selection: Binding(
+                            get: { viewModel.appearancePreference },
+                            set: { viewModel.appearancePreference = $0 }
+                        )
+                    ) {
+                        ForEach(AppearancePreference.allCases) { preference in
+                            Text(preference.title).tag(preference)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+
                 Section("Reminders") {
                     Toggle("Daily logging reminder", isOn: $viewModel.remindersEnabled)
                 }
 
-                Section("Data") {
+                Section("Share & feedback") {
+                    ShareLink(item: viewModel.shareText) {
+                        Label("Share today's progress", systemImage: "square.and.arrow.up")
+                    }
+
+                    Button {
+                        requestReview()
+                    } label: {
+                        Label("Write a review", systemImage: "star")
+                    }
+                }
+
+                Section {
                     LabeledContent("Entries logged", value: "\(viewModel.loggedEntryCount)")
 
-                    Button("Clear today's log", role: .destructive) {
-                        viewModel.resetToday()
+                    Button("Reset today's data", role: .destructive) {
+                        confirmResetToday = true
                     }
+
+                    Button("Reset all data", role: .destructive) {
+                        confirmResetAll = true
+                    }
+                } header: {
+                    Text("Data")
+                } footer: {
+                    Text("Reset today clears only this day's log. Reset all removes every entry and your custom foods.")
                 }
 
                 Section {
@@ -54,10 +93,41 @@ struct SettingsView: View {
             .background(AppTheme.background)
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Settings")
+            .confirmationDialog(
+                "Reset today's data?",
+                isPresented: $confirmResetToday,
+                titleVisibility: .visible
+            ) {
+                Button("Reset today", role: .destructive) {
+                    viewModel.resetToday()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This removes every entry logged today. Older days stay put.")
+            }
+            .confirmationDialog(
+                "Reset all data?",
+                isPresented: $confirmResetAll,
+                titleVisibility: .visible
+            ) {
+                Button("Reset everything", role: .destructive) {
+                    viewModel.resetAllData()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This clears all logged entries and custom foods, and restores the default daily goal.")
+            }
         }
     }
 }
 
 #Preview {
-    SettingsView(viewModel: SettingsViewModel(store: .seeded, onboarding: .preview))
+    SettingsView(
+        viewModel: SettingsViewModel(
+            store: .seeded,
+            onboarding: .preview,
+            customFoods: .preview,
+            appearance: AppearanceSettings()
+        )
+    )
 }

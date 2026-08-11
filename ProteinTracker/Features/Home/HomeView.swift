@@ -191,7 +191,7 @@ struct HomeView: View {
 
     private var todaySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Today's log", subtitle: "Tap the grams to edit.")
+            sectionHeader("Today's log", subtitle: "Tap grams to edit · trash to delete.")
 
             if viewModel.todayEntries.isEmpty {
                 Text("Nothing logged yet.")
@@ -203,9 +203,11 @@ struct HomeView: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(viewModel.todayEntries) { entry in
-                        LoggedEntryRow(entry: entry) {
-                            beginEditing(entry)
-                        }
+                        LoggedEntryRow(
+                            entry: entry,
+                            onEditGrams: { beginEditing(entry) },
+                            onDelete: { viewModel.delete(entry) }
+                        )
                         .contextMenu {
                             Button("Edit grams", systemImage: "pencil") {
                                 beginEditing(entry)

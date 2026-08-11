@@ -3,6 +3,7 @@ import SwiftUI
 struct LoggedEntryRow: View {
     let entry: ProteinEntry
     var onEditGrams: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
 
     var body: some View {
         HStack(spacing: 12) {
@@ -36,6 +37,18 @@ struct LoggedEntryRow: View {
             .disabled(onEditGrams == nil)
             .accessibilityLabel("Edit \(entry.name) grams, currently \(entry.grams)")
             .accessibilityHint("Double tap to change the protein amount")
+
+            if let onDelete {
+                Button(role: .destructive, action: onDelete) {
+                    Image(systemName: "trash")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.red.opacity(0.85))
+                        .padding(8)
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Delete \(entry.name)")
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -43,6 +56,10 @@ struct LoggedEntryRow: View {
 }
 
 #Preview {
-    LoggedEntryRow(entry: ProteinEntry(name: "Protein shake", grams: 25)) {}
-        .background(AppTheme.background)
+    LoggedEntryRow(
+        entry: ProteinEntry(name: "Protein shake", grams: 25),
+        onEditGrams: {},
+        onDelete: {}
+    )
+    .background(AppTheme.background)
 }
