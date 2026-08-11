@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @Bindable var viewModel: HomeViewModel
     @FocusState private var isDraftFocused: Bool
+    @State private var entryPendingAction: ProteinEntry?
     @State private var entryBeingEdited: ProteinEntry?
     @State private var editedGramsText = ""
     @State private var customNamePending: String?
@@ -62,6 +63,35 @@ struct HomeView: View {
             if let name = customNamePending {
                 Text("How much protein is in one serving of \(name)?")
             }
+        }
+        .confirmationDialog(
+            entryPendingAction.map { "\($0.name)" } ?? "Entry",
+            isPresented: Binding(
+                get: { entryPendingAction != nil },
+                set: { if !$0 { entryPendingAction = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Update grams") {
+                guard let entry = entryPendingAction else { return }
+                entryPendingAction = nil
+                Task { @MainActor in
+                    beginEditing(entry)
+                }
+            }
+
+            Button("Delete", role: .destructive) {
+                if let entry = entryPendingAction {
+                    viewModel.delete(entry)
+                }
+                entryPendingAction = nil
+            }
+
+            Button("Cancel", role: .cancel) {
+                entryPendingAction = nil
+            }
+        } message: {
+            Text("Update the protein amount or remove this entry.")
         }
     }
 
@@ -191,7 +221,7 @@ struct HomeView: View {
 
     private var todaySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Today's log", subtitle: "Tap grams to edit · trash to delete.")
+            sectionHeader("Today's log", subtitle: "Tap an entry to edit or delete.")
 
             if viewModel.todayEntries.isEmpty {
                 Text("Nothing logged yet.")
@@ -203,19 +233,8 @@ struct HomeView: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(viewModel.todayEntries) { entry in
-                        LoggedEntryRow(
-                            entry: entry,
-                            onEditGrams: { beginEditing(entry) },
-                            onDelete: { viewModel.delete(entry) }
-                        )
-                        .contextMenu {
-                            Button("Edit grams", systemImage: "pencil") {
-                                beginEditing(entry)
-                            }
-
-                            Button("Delete", systemImage: "trash", role: .destructive) {
-                                viewModel.delete(entry)
-                            }
+                        LoggedEntryRow(entry: entry) {
+                            entryPendingAction = entry
                         }
 
                         if entry != viewModel.todayEntries.last {

@@ -79,9 +79,15 @@ enum AppTheme {
         .ignoresSafeArea()
     }
 
+    /// Light at the ring start, deepening to forest green as progress fills.
     static var ringGradient: AngularGradient {
         AngularGradient(
-            colors: [emerald, mint, emerald],
+            colors: [
+                Color(red: 0.72, green: 0.94, blue: 0.82),
+                Color(red: 0.35, green: 0.78, blue: 0.52),
+                Color(red: 0.12, green: 0.56, blue: 0.37),
+                Color(red: 0.08, green: 0.32, blue: 0.22)
+            ],
             center: .center,
             startAngle: .degrees(0),
             endAngle: .degrees(360)
