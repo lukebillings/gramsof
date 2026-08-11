@@ -3,6 +3,7 @@ import SwiftUI
 
 struct StatsView: View {
     @Bindable var viewModel: StatsViewModel
+    @State private var selectedDay: DayTotal?
 
     var body: some View {
         NavigationStack {
@@ -17,6 +18,16 @@ struct StatsView: View {
             }
             .background(AppTheme.background)
             .navigationTitle("Stats")
+            .sheet(item: $selectedDay) { day in
+                DayDetailView(
+                    date: day.date,
+                    entries: viewModel.entries(on: day.date),
+                    total: day.grams,
+                    goal: viewModel.goal
+                )
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+            }
         }
     }
 
@@ -32,12 +43,16 @@ struct StatsView: View {
     private var summaryTiles: some View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
-                StatTile(label: "Avg / day", value: "\(viewModel.averagePerDay)g")
-                StatTile(label: "Hit rate", value: viewModel.hitRate)
+                StatTile(label: "Average protein intake per day", value: "\(viewModel.averagePerDay)g")
+                StatTile(label: "Days reached goal", value: viewModel.hitRate)
             }
             HStack(spacing: 12) {
-                StatTile(label: "Best day", value: "\(viewModel.bestDay)g")
-                StatTile(label: "Streak", value: "\(viewModel.streak) days")
+                StatTile(
+                    label: "Highest protein intake",
+                    value: viewModel.highestProteinIntakeLabel,
+                    detail: viewModel.highestProteinIntakeDate
+                )
+                StatTile(label: "Goal reached streak", value: "\(viewModel.streak) days")
             }
         }
     }
@@ -57,7 +72,9 @@ struct StatsView: View {
             }
 
             if viewModel.range == .month {
-                MonthHeatmapView(totals: viewModel.totals, goal: viewModel.goal)
+                MonthHeatmapView(totals: viewModel.totals, goal: viewModel.goal) { day in
+                    selectedDay = day
+                }
             } else {
                 weekChart
             }
@@ -73,7 +90,7 @@ struct StatsView: View {
                     x: .value("Day", day.date, unit: .day),
                     y: .value("Grams", day.grams)
                 )
-                .foregroundStyle(AppTheme.barGradient)
+                .foregroundStyle(AppTheme.progressFill(grams: day.grams, goal: viewModel.goal))
                 .cornerRadius(6)
             }
 

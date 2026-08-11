@@ -36,12 +36,37 @@ final class SettingsViewModel {
         get { onboarding.remindersEnabled }
         set {
             onboarding.remindersEnabled = newValue
-            Task {
-                let effectivelyEnabled = await DailyReminderScheduler.sync(enabled: newValue)
-                if onboarding.remindersEnabled != effectivelyEnabled {
-                    onboarding.remindersEnabled = effectivelyEnabled
-                }
-            }
+            Task { await syncReminders(enabled: newValue) }
+        }
+    }
+
+    /// Bound to the Settings time picker. Persists hour/minute and reschedules when reminders are on.
+    var reminderTime: Date {
+        get {
+            Calendar.current.date(
+                from: DateComponents(
+                    hour: onboarding.reminderHour,
+                    minute: onboarding.reminderMinute
+                )
+            ) ?? Date()
+        }
+        set {
+            let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+            onboarding.reminderHour = components.hour ?? OnboardingState.defaultReminderHour
+            onboarding.reminderMinute = components.minute ?? OnboardingState.defaultReminderMinute
+            guard onboarding.remindersEnabled else { return }
+            Task { await syncReminders(enabled: true) }
+        }
+    }
+
+    private func syncReminders(enabled: Bool) async {
+        let effectivelyEnabled = await DailyReminderScheduler.sync(
+            enabled: enabled,
+            hour: onboarding.reminderHour,
+            minute: onboarding.reminderMinute
+        )
+        if onboarding.remindersEnabled != effectivelyEnabled {
+            onboarding.remindersEnabled = effectivelyEnabled
         }
     }
 
@@ -52,16 +77,18 @@ final class SettingsViewModel {
 
     var loggedEntryCount: Int { store.entries.count }
 
-    var onboardingGoalName: String { onboarding.goal?.title ?? "Not set" }
-
-    var shareText: String {
-        let total = store.todayTotal
-        let goal = store.dailyGoal
-        if total >= goal {
-            return "I hit my \(goal)g protein goal today on Protein Tracker — \(total)g logged."
-        }
-        return "I've logged \(total)g of \(goal)g protein today on Protein Tracker."
+    /// App Store product URL — swap in the real `id…` link once the listing is live.
+    var appStoreURL: URL {
+        URL(string: "https://apps.apple.com/app/gramsof")!
     }
+
+    var appShareMessage: String {
+        "Track your daily protein with Gramsof."
+    }
+
+    var termsAndConditionsURL: URL { LegalLinks.termsAndConditions }
+    var privacyPolicyURL: URL { LegalLinks.privacyPolicy }
+    var termsOfServiceURL: URL { LegalLinks.termsOfService }
 
     func resetToday() {
         store.removeToday()

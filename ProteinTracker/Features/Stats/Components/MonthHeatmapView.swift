@@ -4,6 +4,7 @@ import SwiftUI
 struct MonthHeatmapView: View {
     let totals: [DayTotal]
     let goal: Int
+    var onSelectDay: ((DayTotal) -> Void)? = nil
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 7)
     private let weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"]
@@ -35,10 +36,22 @@ struct MonthHeatmapView: View {
                 .font(.caption2)
                 .foregroundStyle(AppTheme.ink.opacity(0.4))
 
-            ForEach([0.0, 0.4, 0.65, 0.85, 1.0], id: \.self) { progress in
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .fill(fill(for: progress))
-                    .frame(width: 12, height: 12)
+            ForEach(legendSteps, id: \.progress) { step in
+                VStack(spacing: 3) {
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .fill(fill(for: step.progress))
+                        .frame(width: 12, height: 12)
+                        .overlay {
+                            if step.progress == 0 {
+                                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                    .strokeBorder(AppTheme.ink.opacity(0.12), lineWidth: 1)
+                            }
+                        }
+
+                    Text(step.label)
+                        .font(.system(size: 8, weight: .medium))
+                        .foregroundStyle(AppTheme.ink.opacity(0.4))
+                }
             }
 
             Text("Goal")
@@ -49,6 +62,16 @@ struct MonthHeatmapView: View {
         .padding(.top, 4)
     }
 
+    private var legendSteps: [(progress: Double, label: String)] {
+        [
+            (0.0, "0%"),
+            (0.25, "25%"),
+            (0.5, "50%"),
+            (0.75, "75%"),
+            (1.0, "100%")
+        ]
+    }
+
     @ViewBuilder
     private func square(for cell: HeatmapCell) -> some View {
         switch cell {
@@ -56,10 +79,25 @@ struct MonthHeatmapView: View {
             Color.clear
                 .aspectRatio(1, contentMode: .fit)
         case .day(let total):
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(fill(for: progress(for: total)))
-                .aspectRatio(1, contentMode: .fit)
-                .accessibilityLabel(accessibilityLabel(for: total))
+            let progress = progress(for: total)
+            Button {
+                onSelectDay?(total)
+            } label: {
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(fill(for: progress))
+                    .overlay {
+                        if progress == 0 {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .strokeBorder(AppTheme.ink.opacity(0.12), lineWidth: 1)
+                        }
+                    }
+                    .aspectRatio(1, contentMode: .fit)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .disabled(onSelectDay == nil)
+            .accessibilityLabel(accessibilityLabel(for: total))
+            .accessibilityHint("Shows the food log for this day")
         }
     }
 
@@ -68,19 +106,9 @@ struct MonthHeatmapView: View {
         return min(Double(day.grams) / Double(goal), 1)
     }
 
+    /// Five clearly stepped greens so partial days don't all read the same.
     private func fill(for progress: Double) -> Color {
-        switch progress {
-        case 0:
-            return AppTheme.mint.opacity(0.3)
-        case ..<0.5:
-            return AppTheme.emerald.opacity(0.28)
-        case ..<0.75:
-            return AppTheme.emerald.opacity(0.5)
-        case ..<1:
-            return AppTheme.emerald.opacity(0.72)
-        default:
-            return AppTheme.emerald
-        }
+        AppTheme.progressFill(for: progress)
     }
 
     private func accessibilityLabel(for day: DayTotal) -> String {

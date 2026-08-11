@@ -79,9 +79,11 @@ enum AppTheme {
         .ignoresSafeArea()
     }
 
-    /// Light at the ring start, deepening to forest green as progress fills.
-    static var ringGradient: AngularGradient {
-        AngularGradient(
+    /// Light at the ring start, deepening to forest green toward the leading tip.
+    /// Uses shape-local angles (0° = right); `ProteinRingView` rotates -90° so fill starts at top.
+    static func ringGradient(progress: Double) -> AngularGradient {
+        let clamped = min(max(progress, 0.001), 1)
+        return AngularGradient(
             colors: [
                 Color(red: 0.72, green: 0.94, blue: 0.82),
                 Color(red: 0.35, green: 0.78, blue: 0.52),
@@ -90,8 +92,12 @@ enum AppTheme {
             ],
             center: .center,
             startAngle: .degrees(0),
-            endAngle: .degrees(360)
+            endAngle: .degrees(360 * clamped)
         )
+    }
+
+    static var ringGradient: AngularGradient {
+        ringGradient(progress: 1)
     }
 
     static let barGradient = LinearGradient(
@@ -99,6 +105,29 @@ enum AppTheme {
         startPoint: .bottom,
         endPoint: .top
     )
+
+    /// Shared progress greens for the month heatmap and week bars.
+    static func progressFill(for progress: Double) -> Color {
+        switch progress {
+        case 0:
+            return foam
+        case ..<0.25:
+            return mint
+        case ..<0.5:
+            return mint.mix(with: emerald, by: 0.45)
+        case ..<0.75:
+            return emerald.opacity(0.78)
+        case ..<1:
+            return emerald
+        default:
+            return forest
+        }
+    }
+
+    static func progressFill(grams: Int, goal: Int) -> Color {
+        guard goal > 0 else { return foam }
+        return progressFill(for: min(Double(grams) / Double(goal), 1))
+    }
 }
 
 private extension Color {

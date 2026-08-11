@@ -16,10 +16,12 @@ final class OnboardingViewModel {
     var step: Step = .goal
     var selectedGoal: OnboardingGoal?
     var selectedPlan: SubscriptionPlan = .annual
-    var dailyGoal: Int = 150 {
+    /// Starts empty so the user types their own target on the daily goal step.
+    var dailyGoal: Int? {
         didSet {
-            let clamped = min(max(dailyGoal, goalRange.lowerBound), goalRange.upperBound)
-            if dailyGoal != clamped {
+            guard let value = dailyGoal else { return }
+            let clamped = min(max(value, goalRange.lowerBound), goalRange.upperBound)
+            if value != clamped {
                 dailyGoal = clamped
             }
         }
@@ -28,11 +30,16 @@ final class OnboardingViewModel {
 
     let goalRange = 60...300
 
+    var hasValidDailyGoal: Bool {
+        guard let dailyGoal else { return false }
+        return goalRange.contains(dailyGoal)
+    }
+
     init(state: OnboardingState, store: ProteinStore) {
         self.state = state
         self.store = store
         selectedGoal = state.goal
-        dailyGoal = store.dailyGoal
+        dailyGoal = nil
         remindersEnabled = state.remindersEnabled
     }
 
@@ -62,7 +69,6 @@ final class OnboardingViewModel {
     /// Tapping a goal selects it and moves straight to the paywall.
     func select(_ goal: OnboardingGoal) {
         selectedGoal = goal
-        dailyGoal = suggestedDailyGoal
         step = .paywall
     }
 
@@ -93,9 +99,13 @@ final class OnboardingViewModel {
     /// Purchases are not wired up yet, so this only records the choice and lets
     /// the user into the app.
     func finish() async {
-        store.dailyGoal = dailyGoal
+        store.dailyGoal = dailyGoal ?? suggestedDailyGoal
 
-        let effectivelyEnabled = await DailyReminderScheduler.sync(enabled: remindersEnabled)
+        let effectivelyEnabled = await DailyReminderScheduler.sync(
+            enabled: remindersEnabled,
+            hour: state.reminderHour,
+            minute: state.reminderMinute
+        )
         remindersEnabled = effectivelyEnabled
         state.remindersEnabled = effectivelyEnabled
 

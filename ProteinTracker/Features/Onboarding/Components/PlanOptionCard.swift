@@ -36,8 +36,10 @@ struct PlanOptionCard: View {
         HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("7 days free trial")
-                    .font(.title3.weight(.bold))
+                    .font(.body.weight(.bold))
                     .foregroundStyle(AppTheme.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
 
                 HStack(spacing: 8) {
                     Text(plan.title)
@@ -59,14 +61,14 @@ struct PlanOptionCard: View {
 
             VStack(alignment: .trailing, spacing: 2) {
                 Text("£49.99 per year")
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(AppTheme.ink)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(AppTheme.ink.opacity(0.45))
                     .multilineTextAlignment(.trailing)
 
                 if let effective = plan.effectiveMonthlyLabel {
                     Text(effective)
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(AppTheme.ink)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(AppTheme.ink.opacity(0.45))
                 }
             }
         }
@@ -90,12 +92,12 @@ struct PlanOptionCard: View {
 
             VStack(alignment: .trailing, spacing: 2) {
                 Text(plan.priceLabel)
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(AppTheme.ink)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(AppTheme.ink.opacity(0.45))
 
                 Text(plan.pricePeriod)
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(AppTheme.ink)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(AppTheme.ink.opacity(0.45))
             }
         }
     }

@@ -24,11 +24,7 @@ struct GoalSelectionView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Step 1 of 4")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(AppTheme.ink.opacity(0.45))
-
-            Text("What do you want to achieve?")
+            Text("Why do you want to track your protein?")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.ink)
 

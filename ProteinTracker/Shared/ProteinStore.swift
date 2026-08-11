@@ -55,9 +55,13 @@ final class ProteinStore {
     // MARK: - History
 
     func total(on date: Date) -> Int {
+        entries(on: date).reduce(0) { $0 + $1.grams }
+    }
+
+    func entries(on date: Date) -> [ProteinEntry] {
         entries
             .filter { calendar.isDate($0.loggedAt, inSameDayAs: date) }
-            .reduce(0) { $0 + $1.grams }
+            .sorted { $0.loggedAt > $1.loggedAt }
     }
 
     /// Daily totals ending today, oldest first.

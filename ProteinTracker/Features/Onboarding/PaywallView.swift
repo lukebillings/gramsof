@@ -50,24 +50,11 @@ struct PaywallView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Step 2 of 4")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(AppTheme.ink.opacity(0.45))
-
-            Text("Go Pro and hit your target")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(AppTheme.ink)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            if let goal = viewModel.selectedGoal {
-                Text("Everything you need to \(goal.title.lowercased()).")
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.ink.opacity(0.55))
-            }
-        }
+        Text("Help hit your protein goals with Gramsof: Track Protein Intake")
+            .font(.system(size: 24, weight: .bold, design: .rounded))
+            .foregroundStyle(AppTheme.ink)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var benefitsGrid: some View {
@@ -124,10 +111,37 @@ struct PaywallView: View {
             }
             .buttonStyle(.glassProminent)
             .tint(AppTheme.emerald)
+
+            legalSmallPrint
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 8)
+    }
+
+    private var legalSmallPrint: some View {
+        VStack(spacing: 6) {
+            Text("By continuing, you agree to our Terms and Conditions, Privacy Policy, and Terms of Service.")
+                .font(.caption2)
+                .foregroundStyle(AppTheme.ink.opacity(0.45))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 6) {
+                Link("Terms and Conditions", destination: LegalLinks.termsAndConditions)
+                Text("·")
+                    .foregroundStyle(AppTheme.ink.opacity(0.3))
+                Link("Privacy Policy", destination: LegalLinks.privacyPolicy)
+                Text("·")
+                    .foregroundStyle(AppTheme.ink.opacity(0.3))
+                Link("Terms of Service", destination: LegalLinks.termsOfService)
+            }
+            .font(.caption2.weight(.medium))
+            .tint(AppTheme.emerald.opacity(0.85))
+            .minimumScaleFactor(0.8)
+            .lineLimit(1)
+        }
+        .padding(.top, 2)
     }
 }
 

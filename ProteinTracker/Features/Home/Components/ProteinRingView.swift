@@ -15,7 +15,7 @@ struct ProteinRingView: View {
             Circle()
                 .trim(from: 0, to: min(progress, 1))
                 .stroke(
-                    AppTheme.ringGradient,
+                    AppTheme.ringGradient(progress: progress),
                     style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))

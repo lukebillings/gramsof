@@ -114,7 +114,7 @@ struct HomeView: View {
 
             if viewModel.showsRemaining {
                 Text(viewModel.hasReachedGoal
-                     ? "Goal smashed. Nice work."
+                     ? "You have reached your daily target!"
                      : "\(viewModel.remaining)g to go today")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(AppTheme.ink.opacity(0.6))
@@ -221,7 +221,7 @@ struct HomeView: View {
 
     private var todaySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Today's log", subtitle: "Tap an entry to edit or delete.")
+            sectionHeader("Today's log", subtitle: "Tap an entry to edit grams or delete.")
 
             if viewModel.todayEntries.isEmpty {
                 Text("Nothing logged yet.")

@@ -44,8 +44,19 @@ final class StatsViewModel {
         "\(daysHitGoal)/\(totals.count)"
     }
 
-    var bestDay: Int {
-        totals.map(\.grams).max() ?? 0
+    /// Day with the most protein in the selected range.
+    var highestProteinDay: DayTotal? {
+        totals.max(by: { $0.grams < $1.grams })
+    }
+
+    var highestProteinIntakeLabel: String {
+        guard let day = highestProteinDay else { return "0g" }
+        return "\(day.grams)g"
+    }
+
+    var highestProteinIntakeDate: String? {
+        guard let day = highestProteinDay, day.grams > 0 else { return nil }
+        return day.date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
     }
 
     /// Consecutive days ending today where the goal was met.
@@ -56,5 +67,9 @@ final class StatsViewModel {
             count += 1
         }
         return count
+    }
+
+    func entries(on date: Date) -> [ProteinEntry] {
+        store.entries(on: date)
     }
 }

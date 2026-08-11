@@ -35,10 +35,6 @@ struct DailyProteinTargetView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Step 3 of 4")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(AppTheme.ink.opacity(0.45))
-
             Text("What's your daily protein target?")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.ink)
@@ -52,7 +48,7 @@ struct DailyProteinTargetView: View {
     private var targetCard: some View {
         VStack(spacing: 12) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                TextField("150", value: $viewModel.dailyGoal, format: .number)
+                TextField("", value: $viewModel.dailyGoal, format: .number)
                     .font(.system(size: 64, weight: .bold, design: .rounded))
                     .foregroundStyle(AppTheme.ink)
                     .keyboardType(.numberPad)
@@ -86,6 +82,7 @@ struct DailyProteinTargetView: View {
         }
         .buttonStyle(.glassProminent)
         .tint(AppTheme.emerald)
+        .disabled(!viewModel.hasValidDailyGoal)
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 8)

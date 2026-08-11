@@ -33,15 +33,11 @@ struct NotificationsOptInView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Step 4 of 4")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(AppTheme.ink.opacity(0.45))
-
             Text("Want a daily logging reminder?")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.ink)
 
-            Text("We'll nudge you around 6pm so today's protein doesn't slip.")
+            Text("We'll nudge you around 6pm by default. You can pick any time in Settings.")
                 .font(.subheadline)
                 .foregroundStyle(AppTheme.ink.opacity(0.55))
         }
@@ -51,7 +47,7 @@ struct NotificationsOptInView: View {
         VStack(spacing: 12) {
             reminderOption(
                 title: "Yes, remind me",
-                detail: "Daily notification at 6pm",
+                detail: "Daily at 6pm — change the time in Settings",
                 symbol: "bell.badge.fill",
                 isSelected: viewModel.remindersEnabled
             ) {

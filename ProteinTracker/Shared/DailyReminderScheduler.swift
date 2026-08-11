@@ -7,7 +7,11 @@ enum DailyReminderScheduler {
     /// Requests notification permission if needed and schedules (or clears) the daily reminder.
     /// Returns whether reminders are effectively enabled after the attempt.
     @discardableResult
-    static func sync(enabled: Bool) async -> Bool {
+    static func sync(
+        enabled: Bool,
+        hour: Int = OnboardingState.defaultReminderHour,
+        minute: Int = OnboardingState.defaultReminderMinute
+    ) async -> Bool {
         let center = UNUserNotificationCenter.current()
 
         guard enabled else {
@@ -29,8 +33,8 @@ enum DailyReminderScheduler {
         center.removePendingNotificationRequests(withIdentifiers: [requestIdentifier])
 
         var dateComponents = DateComponents()
-        dateComponents.hour = 18
-        dateComponents.minute = 0
+        dateComponents.hour = min(max(hour, 0), 23)
+        dateComponents.minute = min(max(minute, 0), 59)
 
         let content = UNMutableNotificationContent()
         content.title = "Log today's protein"
