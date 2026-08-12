@@ -16,6 +16,7 @@
 		27219EC3712F4D24CF551E06 /* GoalOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7FD944ED9D05EC5A06F566 /* GoalOptionRow.swift */; };
 		2AA6002FD9F449FA2DB8F2E7 /* FoodItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCE90DA79638C0041462DE /* FoodItem.swift */; };
 		2BBE16C8F23915FF6E4D9E61 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EA77104AD6BB82E9F1B3F /* OnboardingViewModel.swift */; };
+		2FB2DA6D078D014270F32562 /* AppEngagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3905069B62B431A7F10357E /* AppEngagement.swift */; };
 		3A2A9438E94F5EA16D64544C /* SubscriptionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB46934C10F0B00FED427BA /* SubscriptionStore.swift */; };
 		4159146B47B967B2A1F28365 /* FoodLogSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC96072CE9D9714B7D7D778 /* FoodLogSort.swift */; };
 		46F9F6A70B371917A1AF859E /* OnboardingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A32D11CA72E29A759C0D94 /* OnboardingState.swift */; };
@@ -23,6 +24,7 @@
 		4B302763B407B6696A79E4B2 /* GoalSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04C78CDCD5D1F68A2392F15 /* GoalSelectionView.swift */; };
 		4C3901E5A5F0CE13BB2C3294 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312D738D72DB8596EA2FD56C /* SplashView.swift */; };
 		5E1DF78254CB81B9F98515CF /* PlanOptionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DB83A2FA82C9DD7BEE6260 /* PlanOptionCard.swift */; };
+		62496F27F3F8ED299B67A923 /* HomeTutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6FB1ECB29460C4EEBE7F5F /* HomeTutorialView.swift */; };
 		62AB5973E5F229A37BA8E14D /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431A9E0936A4C4DD4F2881DD /* OnboardingFlowView.swift */; };
 		7474347656CCD612BD6AABDC /* ProteinDataExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2977C5C7EC709F33CB8D71 /* ProteinDataExport.swift */; };
 		76A0CC9DD3F5D63968735A7A /* FoodLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6233F88990A9B6E27759C69 /* FoodLookup.swift */; };
@@ -45,6 +47,7 @@
 		CA3F739208B026AF9222AB8A /* DayDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F996FBC47B27CFCF23370E16 /* DayDetailView.swift */; };
 		D3CFEE5C5B9AE23B129373BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA7CEDC0D550B559F5ED095B /* Assets.xcassets */; };
 		D44046B06558D531E88B5A38 /* StatTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8B3E28E613F6DCB5F720C2 /* StatTile.swift */; };
+		D69DD0F2835814C830DD0B4F /* Day1CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE698CBA49970E6952710201 /* Day1CheckInView.swift */; };
 		E0C4B1A74EB0F2FBEC4BF73F /* MonthHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD81CAD4CC1051D8FA49C35 /* MonthHeatmapView.swift */; };
 		E2B98B3A64AD1014EAF5196B /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C44E3CA16D10B4D0A41234 /* SettingsViewModel.swift */; };
 		E386155394D7FFBFB84E281D /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E56626BF4C208607A1B2C6B /* StatsView.swift */; };
@@ -94,8 +97,11 @@
 		CAEA51F6F4561E4C28B9306A /* FoodEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEmoji.swift; sourceTree = "<group>"; };
 		CF2977C5C7EC709F33CB8D71 /* ProteinDataExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinDataExport.swift; sourceTree = "<group>"; };
 		D89FBDBEE2D4BE3411921BD8 /* QuickAddItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddItem.swift; sourceTree = "<group>"; };
+		DB6FB1ECB29460C4EEBE7F5F /* HomeTutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTutorialView.swift; sourceTree = "<group>"; };
 		DCE5C14B3453021FA1634D76 /* ProteinRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinRingView.swift; sourceTree = "<group>"; };
+		E3905069B62B431A7F10357E /* AppEngagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEngagement.swift; sourceTree = "<group>"; };
 		EA5CFA3724850AA187A87F8D /* ProteinStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinStore.swift; sourceTree = "<group>"; };
+		EE698CBA49970E6952710201 /* Day1CheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day1CheckInView.swift; sourceTree = "<group>"; };
 		F7D0A853AA716EAFA6D2E528 /* DailyReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReminderScheduler.swift; sourceTree = "<group>"; };
 		F840DD06022B8578E8A2AE37 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F996FBC47B27CFCF23370E16 /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDetailView.swift; sourceTree = "<group>"; };
@@ -137,7 +143,9 @@
 			isa = PBXGroup;
 			children = (
 				A446C9576FD47BDC6CBFBCE7 /* DailyProteinTargetView.swift */,
+				EE698CBA49970E6952710201 /* Day1CheckInView.swift */,
 				C04C78CDCD5D1F68A2392F15 /* GoalSelectionView.swift */,
+				DB6FB1ECB29460C4EEBE7F5F /* HomeTutorialView.swift */,
 				99DE857B0510D35F8A5D0A35 /* NotificationsOptInView.swift */,
 				431A9E0936A4C4DD4F2881DD /* OnboardingFlowView.swift */,
 				968EA77104AD6BB82E9F1B3F /* OnboardingViewModel.swift */,
@@ -205,6 +213,7 @@
 		BE59E7624D8574FF588F5C31 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				E3905069B62B431A7F10357E /* AppEngagement.swift */,
 				533B593C8D0CA4C298DC2A50 /* AppTheme.swift */,
 				13715386477BB094119BB36D /* CustomFoodDirectory.swift */,
 				F7D0A853AA716EAFA6D2E528 /* DailyReminderScheduler.swift */,
@@ -321,10 +330,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FB2DA6D078D014270F32562 /* AppEngagement.swift in Sources */,
 				B6E5FDA59190FBFFB525C809 /* AppTheme.swift in Sources */,
 				4A6D2B06FC19E56F5A527151 /* CustomFoodDirectory.swift in Sources */,
 				A88D2E1F9A680A1292DD5A64 /* DailyProteinTargetView.swift in Sources */,
 				09EF46BAE9FF52EB01E28EC1 /* DailyReminderScheduler.swift in Sources */,
+				D69DD0F2835814C830DD0B4F /* Day1CheckInView.swift in Sources */,
 				CA3F739208B026AF9222AB8A /* DayDetailView.swift in Sources */,
 				A2883ABF526129CE4277CB80 /* DayTotal.swift in Sources */,
 				8CFE4B6012F3A1BCDD2ABE0B /* FoodDatabase.swift in Sources */,
@@ -336,6 +347,7 @@
 				27219EC3712F4D24CF551E06 /* GoalOptionRow.swift in Sources */,
 				4B302763B407B6696A79E4B2 /* GoalSelectionView.swift in Sources */,
 				C484CD04999D47208CBE36C8 /* HapticSettings.swift in Sources */,
+				62496F27F3F8ED299B67A923 /* HomeTutorialView.swift in Sources */,
 				78E22D6EC125AD2C5560D8D2 /* HomeView.swift in Sources */,
 				0992D93DAE0A3E49BB74DB59 /* HomeViewModel.swift in Sources */,
 				C22456B1B280283FCF25D678 /* LegalLinks.swift in Sources */,

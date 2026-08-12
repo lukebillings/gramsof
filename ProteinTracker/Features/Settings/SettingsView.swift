@@ -147,7 +147,7 @@ struct SettingsView: View {
     }
 
     private var goalSection: some View {
-        Section("Daily goal") {
+        Section {
             LabeledContent("Protein target") {
                 HStack(spacing: 4) {
                     TextField("150", value: $viewModel.dailyGoal, format: .number)
@@ -161,6 +161,10 @@ struct SettingsView: View {
             }
 
             Toggle("Show remaining on ring", isOn: $viewModel.showsRemainingOnRing)
+        } header: {
+            Text("Daily goal")
+        } footer: {
+            Text(LegalLinks.proteinTargetDisclaimer)
         }
     }
 
@@ -221,6 +225,18 @@ struct SettingsView: View {
 
             Link(destination: viewModel.featureRequestURL) {
                 Label("Request a feature", systemImage: "lightbulb")
+            }
+
+            Button {
+                viewModel.launchDay1CheckIn()
+            } label: {
+                Label("Day 1 check-in", systemImage: "hand.wave")
+            }
+
+            Button {
+                viewModel.replayHomeTutorial()
+            } label: {
+                Label("Replay app tour", systemImage: "sparkles")
             }
         }
     }
@@ -314,7 +330,8 @@ private struct ActivityShareSheet: UIViewControllerRepresentable {
             onboarding: .preview,
             customFoods: .preview,
             appearance: AppearanceSettings(),
-            haptics: HapticSettings()
+            haptics: HapticSettings(),
+            engagement: .preview
         )
     )
 }

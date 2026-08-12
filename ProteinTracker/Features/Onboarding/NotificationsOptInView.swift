@@ -132,6 +132,11 @@ struct NotificationsOptInView: View {
 #Preview {
     ZStack {
         AppTheme.background
-        NotificationsOptInView(viewModel: OnboardingViewModel(state: .preview, store: .seeded, subscriptions: SubscriptionStore()))
+        NotificationsOptInView(viewModel: OnboardingViewModel(
+            state: .preview,
+            store: .seeded,
+            subscriptions: SubscriptionStore(),
+            engagement: .preview
+        ))
     }
 }

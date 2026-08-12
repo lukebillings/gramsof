@@ -32,6 +32,11 @@ struct GoalSelectionView: View {
 #Preview {
     ZStack {
         AppTheme.background
-        GoalSelectionView(viewModel: OnboardingViewModel(state: .preview, store: .seeded, subscriptions: SubscriptionStore()))
+        GoalSelectionView(viewModel: OnboardingViewModel(
+            state: .preview,
+            store: .seeded,
+            subscriptions: SubscriptionStore(),
+            engagement: .preview
+        ))
     }
 }

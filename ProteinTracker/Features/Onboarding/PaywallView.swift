@@ -210,7 +210,8 @@ struct PaywallView: View {
             let viewModel = OnboardingViewModel(
                 state: .preview,
                 store: .seeded,
-                subscriptions: SubscriptionStore()
+                subscriptions: SubscriptionStore(),
+                engagement: .preview
             )
             viewModel.selectedGoal = .buildMuscle
             return viewModel

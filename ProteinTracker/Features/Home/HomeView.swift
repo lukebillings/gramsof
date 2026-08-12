@@ -2,6 +2,8 @@ import SwiftUI
 
 struct HomeView: View {
     @Bindable var viewModel: HomeViewModel
+    var engagement: AppEngagement
+    @Environment(\.requestReview) private var requestReview
     @FocusState private var isDraftFocused: Bool
     @State private var entryPendingAction: ProteinEntry?
     @State private var entryBeingEdited: ProteinEntry?
@@ -14,7 +16,7 @@ struct HomeView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                title
+                header
                 ringCard
                 quickAddSection
                 searchSection
@@ -26,6 +28,10 @@ struct HomeView: View {
         }
         .background(AppTheme.background)
         .scrollDismissesKeyboard(.interactively)
+        .onChange(of: viewModel.hasReachedGoal) { _, reached in
+            guard reached, engagement.noteGoalReached() else { return }
+            requestReview()
+        }
         .alert("Edit grams", isPresented: Binding(
             get: { entryBeingEdited != nil },
             set: { if !$0 { entryBeingEdited = nil } }
@@ -95,11 +101,40 @@ struct HomeView: View {
         }
     }
 
-    private var title: some View {
-        Text("Log Protein")
-            .font(.largeTitle.bold())
-            .foregroundStyle(AppTheme.ink)
-            .frame(maxWidth: .infinity, alignment: .leading)
+    private var header: some View {
+        HStack(alignment: .center, spacing: 12) {
+            HStack(spacing: 10) {
+                Image("AppLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 36, height: 36)
+                    .clipShape(.rect(cornerRadius: 9))
+
+                Text("Gramsof")
+                    .font(.title2.bold())
+                    .foregroundStyle(AppTheme.ink)
+            }
+
+            Spacer(minLength: 8)
+
+            HStack(spacing: 6) {
+                Image(systemName: "flame.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.emerald)
+
+                Text("\(viewModel.streak)")
+                    .font(.headline.weight(.bold).monospacedDigit())
+                    .foregroundStyle(AppTheme.ink)
+
+                Text(viewModel.streak == 1 ? "day" : "days")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(AppTheme.ink.opacity(0.55))
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .glassEffect(.regular, in: .capsule)
+            .accessibilityLabel("Streak \(viewModel.streak) days")
+        }
     }
 
     // MARK: - Ring
@@ -221,7 +256,29 @@ struct HomeView: View {
 
     private var todaySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Today's log", subtitle: "Tap an entry to edit grams or delete.")
+            HStack(alignment: .top) {
+                sectionHeader("Today's log", subtitle: "Tap an entry to edit grams or delete.")
+
+                Spacer(minLength: 8)
+
+                Menu {
+                    Picker("Sort", selection: $viewModel.foodLogSort) {
+                        ForEach(FoodLogSort.allCases) { sort in
+                            Text(sort.title).tag(sort)
+                        }
+                    }
+                } label: {
+                    Label(viewModel.foodLogSort.title, systemImage: "arrow.up.arrow.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(AppTheme.forest)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                        .glassEffect(.regular.interactive(), in: .capsule)
+                }
+                .onChange(of: viewModel.foodLogSort) { _, _ in
+                    AppHaptics.selection()
+                }
+            }
 
             if viewModel.todayEntries.isEmpty {
                 Text("Nothing logged yet.")
@@ -294,5 +351,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView(viewModel: HomeViewModel(store: .seeded))
+    HomeView(viewModel: HomeViewModel(store: .seeded), engagement: .preview)
 }

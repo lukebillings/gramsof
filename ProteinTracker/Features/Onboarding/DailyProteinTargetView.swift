@@ -64,6 +64,13 @@ struct DailyProteinTargetView: View {
             Text("Type your target · \(viewModel.goalRange.lowerBound)–\(viewModel.goalRange.upperBound)g")
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(AppTheme.ink.opacity(0.45))
+
+            Text(LegalLinks.proteinTargetDisclaimer)
+                .font(.caption)
+                .foregroundStyle(AppTheme.ink.opacity(0.4))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
         .padding(24)
@@ -92,6 +99,11 @@ struct DailyProteinTargetView: View {
 #Preview {
     ZStack {
         AppTheme.background
-        DailyProteinTargetView(viewModel: OnboardingViewModel(state: .preview, store: .seeded, subscriptions: SubscriptionStore()))
+        DailyProteinTargetView(viewModel: OnboardingViewModel(
+            state: .preview,
+            store: .seeded,
+            subscriptions: SubscriptionStore(),
+            engagement: .preview
+        ))
     }
 }

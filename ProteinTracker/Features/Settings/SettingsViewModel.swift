@@ -8,23 +8,28 @@ final class SettingsViewModel {
     let customFoods: CustomFoodDirectory
     let appearance: AppearanceSettings
     let haptics: HapticSettings
+    let engagement: AppEngagement
 
     let goalRange = 60...300
     var importErrorMessage: String?
     var importSuccessMessage: String?
+    /// Set to `true` to ask `RootView` to present the day-1 check-in sheet.
+    var presentsDay1CheckIn = false
 
     init(
         store: ProteinStore,
         onboarding: OnboardingState,
         customFoods: CustomFoodDirectory,
         appearance: AppearanceSettings,
-        haptics: HapticSettings
+        haptics: HapticSettings,
+        engagement: AppEngagement
     ) {
         self.store = store
         self.onboarding = onboarding
         self.customFoods = customFoods
         self.appearance = appearance
         self.haptics = haptics
+        self.engagement = engagement
     }
 
     var dailyGoal: Int {
@@ -155,6 +160,15 @@ final class SettingsViewModel {
     }
 
     func restartOnboarding() {
+        engagement.resetForOnboardingRestart()
         onboarding.restart()
+    }
+
+    func launchDay1CheckIn() {
+        presentsDay1CheckIn = true
+    }
+
+    func replayHomeTutorial() {
+        engagement.startTutorialReplay()
     }
 }

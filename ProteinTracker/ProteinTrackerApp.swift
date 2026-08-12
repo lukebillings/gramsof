@@ -8,6 +8,7 @@ struct ProteinTrackerApp: App {
     @State private var appearance = AppearanceSettings()
     @State private var haptics = HapticSettings()
     @State private var subscriptions = SubscriptionStore()
+    @State private var engagement = AppEngagement()
     @State private var showsSplash = true
 
     var body: some Scene {
@@ -19,7 +20,8 @@ struct ProteinTrackerApp: App {
                     customFoods: customFoods,
                     appearance: appearance,
                     haptics: haptics,
-                    subscriptions: subscriptions
+                    subscriptions: subscriptions,
+                    engagement: engagement
                 )
 
                 if showsSplash {

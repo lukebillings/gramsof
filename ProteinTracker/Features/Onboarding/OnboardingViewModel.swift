@@ -3,6 +3,7 @@ import Observation
 import StoreKit
 
 @Observable
+@MainActor
 final class OnboardingViewModel {
     enum Step: Hashable {
         case goal
@@ -13,6 +14,7 @@ final class OnboardingViewModel {
 
     private let state: OnboardingState
     private let store: ProteinStore
+    private let engagement: AppEngagement
     let subscriptions: SubscriptionStore
 
     var step: Step = .goal
@@ -47,10 +49,16 @@ final class OnboardingViewModel {
             ?? subscriptions.orderedProducts.first
     }
 
-    init(state: OnboardingState, store: ProteinStore, subscriptions: SubscriptionStore) {
+    init(
+        state: OnboardingState,
+        store: ProteinStore,
+        subscriptions: SubscriptionStore,
+        engagement: AppEngagement
+    ) {
         self.state = state
         self.store = store
         self.subscriptions = subscriptions
+        self.engagement = engagement
         selectedGoal = state.goal
         dailyGoal = nil
         remindersEnabled = state.remindersEnabled
@@ -150,6 +158,7 @@ final class OnboardingViewModel {
         remindersEnabled = effectivelyEnabled
         state.remindersEnabled = effectivelyEnabled
 
+        engagement.markOnboardingCompleted()
         state.complete(goal: selectedGoal)
     }
 }

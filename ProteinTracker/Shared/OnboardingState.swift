@@ -67,6 +67,7 @@ final class OnboardingState {
 
     func restart() {
         hasCompleted = false
+        goal = nil
     }
 
     static var preview: OnboardingState {

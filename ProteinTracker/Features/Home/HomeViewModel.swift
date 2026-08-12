@@ -6,6 +6,7 @@ final class HomeViewModel {
     let store: ProteinStore
     let customFoods: CustomFoodDirectory
     var draft: String = ""
+    var foodLogSort: FoodLogSort = .newest
 
     let favourites: [QuickAddItem] = QuickAddItem.favourites
 
@@ -17,7 +18,8 @@ final class HomeViewModel {
     var goal: Int { store.dailyGoal }
     var total: Int { store.todayTotal }
     var remaining: Int { max(store.dailyGoal - store.todayTotal, 0) }
-    var todayEntries: [ProteinEntry] { store.todayEntries }
+    var todayEntries: [ProteinEntry] { store.todayEntries(sortedBy: foodLogSort) }
+    var streak: Int { store.currentStreak }
     var hasReachedGoal: Bool { store.todayTotal >= store.dailyGoal }
     var showsRemaining: Bool { store.showsRemainingOnRing }
 
@@ -50,6 +52,7 @@ final class HomeViewModel {
 
     func add(_ item: QuickAddItem) {
         store.add(ProteinEntry(name: item.name, grams: item.grams))
+        AppHaptics.impact(.light)
     }
 
     func submitDraft() {
@@ -61,25 +64,30 @@ final class HomeViewModel {
         guard let parsed = parse(draft) else { return }
         store.add(ProteinEntry(name: parsed.name, grams: parsed.grams))
         draft = ""
+        AppHaptics.impact(.medium)
     }
 
     func log(_ suggestion: FoodSuggestion) {
         store.add(ProteinEntry(name: suggestion.name, grams: suggestion.grams))
         draft = ""
+        AppHaptics.impact(.medium)
     }
 
     func addCustomFood(named name: String, proteinGrams: Int) {
         let food = customFoods.upsert(name: name, proteinGrams: proteinGrams)
         store.add(ProteinEntry(name: food.name, grams: food.proteinGrams))
         draft = ""
+        AppHaptics.notification(.success)
     }
 
     func delete(_ entry: ProteinEntry) {
         store.remove(entry)
+        AppHaptics.notification(.warning)
     }
 
     func updateGrams(for entry: ProteinEntry, to grams: Int) {
         store.updateGrams(for: entry, to: grams)
+        AppHaptics.impact(.light)
     }
 
     /// Accepts free text like "chicken 40", "40 chicken" or just "40".
