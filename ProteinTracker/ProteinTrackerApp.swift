@@ -6,15 +6,40 @@ struct ProteinTrackerApp: App {
     @State private var onboarding = OnboardingState()
     @State private var customFoods = CustomFoodDirectory()
     @State private var appearance = AppearanceSettings()
+    @State private var haptics = HapticSettings()
+    @State private var subscriptions = SubscriptionStore()
+    @State private var showsSplash = true
 
     var body: some Scene {
         WindowGroup {
-            RootView(
-                store: store,
-                onboarding: onboarding,
-                customFoods: customFoods,
-                appearance: appearance
-            )
+            ZStack {
+                RootView(
+                    store: store,
+                    onboarding: onboarding,
+                    customFoods: customFoods,
+                    appearance: appearance,
+                    haptics: haptics,
+                    subscriptions: subscriptions
+                )
+
+                if showsSplash {
+                    SplashView()
+                        .transition(.opacity)
+                        .zIndex(1)
+                }
+            }
+            .onAppear {
+                AppHaptics.configure(haptics)
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(1400))
+                    withAnimation(.easeOut(duration: 0.35)) {
+                        showsSplash = false
+                    }
+                }
+            }
+            .task {
+                await subscriptions.loadProducts()
+            }
         }
     }
 }

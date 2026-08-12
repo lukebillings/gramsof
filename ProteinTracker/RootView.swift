@@ -10,6 +10,7 @@ struct RootView: View {
     private let store: ProteinStore
     private let onboarding: OnboardingState
     private let appearance: AppearanceSettings
+    private let subscriptions: SubscriptionStore
 
     @State private var homeViewModel: HomeViewModel
     @State private var statsViewModel: StatsViewModel
@@ -20,11 +21,14 @@ struct RootView: View {
         store: ProteinStore,
         onboarding: OnboardingState,
         customFoods: CustomFoodDirectory,
-        appearance: AppearanceSettings
+        appearance: AppearanceSettings,
+        haptics: HapticSettings,
+        subscriptions: SubscriptionStore
     ) {
         self.store = store
         self.onboarding = onboarding
         self.appearance = appearance
+        self.subscriptions = subscriptions
         _homeViewModel = State(initialValue: HomeViewModel(store: store, customFoods: customFoods))
         _statsViewModel = State(initialValue: StatsViewModel(store: store))
         _settingsViewModel = State(
@@ -32,7 +36,8 @@ struct RootView: View {
                 store: store,
                 onboarding: onboarding,
                 customFoods: customFoods,
-                appearance: appearance
+                appearance: appearance,
+                haptics: haptics
             )
         )
     }
@@ -42,7 +47,7 @@ struct RootView: View {
             if onboarding.hasCompleted {
                 tabs
             } else {
-                OnboardingFlowView(state: onboarding, store: store)
+                OnboardingFlowView(state: onboarding, store: store, subscriptions: subscriptions)
             }
         }
         .animation(.smooth(duration: 0.3), value: onboarding.hasCompleted)
@@ -73,6 +78,8 @@ struct RootView: View {
         store: .seeded,
         onboarding: .preview,
         customFoods: .preview,
-        appearance: AppearanceSettings()
+        appearance: AppearanceSettings(),
+        haptics: HapticSettings(),
+        subscriptions: SubscriptionStore()
     )
 }

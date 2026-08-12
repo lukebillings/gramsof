@@ -7,18 +7,44 @@ options:
   groupOrdering:
     - order: [ProteinTracker]
 
+settings:
+  base:
+    DEVELOPMENT_TEAM: 66VA8628J7
+
+schemes:
+  ProteinTracker:
+    build:
+      targets:
+        ProteinTracker: all
+    run:
+      config: Debug
+      storeKitConfiguration: Products.storekit
+    archive:
+      config: Release
+
 targets:
   ProteinTracker:
     type: application
     platform: iOS
     sources:
       - path: ProteinTracker
+    entitlements:
+      path: ProteinTracker/ProteinTracker.entitlements
+      properties:
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.$(CFBundleIdentifier)
+        com.apple.developer.icloud-services:
+          - CloudKit
+          - CloudDocuments
+        com.apple.developer.ubiquity-container-identifiers:
+          - iCloud.$(CFBundleIdentifier)
+        com.apple.developer.ubiquity-kvstore-identifier: $(TeamIdentifierPrefix)$(CFBundleIdentifier)
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lukebillings.ProteinTracker
         PRODUCT_NAME: Protein Tracker
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Protein Tracker
+        INFOPLIST_KEY_CFBundleDisplayName: Gramsof
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight

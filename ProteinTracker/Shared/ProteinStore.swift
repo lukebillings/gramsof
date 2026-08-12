@@ -43,13 +43,35 @@ final class ProteinStore {
     // MARK: - Today
 
     var todayEntries: [ProteinEntry] {
-        entries
-            .filter { calendar.isDateInToday($0.loggedAt) }
-            .sorted { $0.loggedAt > $1.loggedAt }
+        entries(on: .now, sortedBy: .newest)
+    }
+
+    func todayEntries(sortedBy sort: FoodLogSort) -> [ProteinEntry] {
+        entries(on: .now, sortedBy: sort)
     }
 
     var todayTotal: Int {
         todayEntries.reduce(0) { $0 + $1.grams }
+    }
+
+    /// Consecutive days ending today where the daily goal was met.
+    /// If today is still in progress and under goal, continues from yesterday.
+    var currentStreak: Int {
+        var count = 0
+        var day = calendar.startOfDay(for: .now)
+
+        if total(on: day) < dailyGoal {
+            guard let yesterday = calendar.date(byAdding: .day, value: -1, to: day) else { return 0 }
+            day = yesterday
+        }
+
+        while total(on: day) >= dailyGoal {
+            count += 1
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: day) else { break }
+            day = previous
+        }
+
+        return count
     }
 
     // MARK: - History
@@ -58,10 +80,30 @@ final class ProteinStore {
         entries(on: date).reduce(0) { $0 + $1.grams }
     }
 
-    func entries(on date: Date) -> [ProteinEntry] {
-        entries
-            .filter { calendar.isDate($0.loggedAt, inSameDayAs: date) }
-            .sorted { $0.loggedAt > $1.loggedAt }
+    func entries(on date: Date, sortedBy sort: FoodLogSort = .newest) -> [ProteinEntry] {
+        let filtered = entries.filter { calendar.isDate($0.loggedAt, inSameDayAs: date) }
+        switch sort {
+        case .newest:
+            return filtered.sorted { $0.loggedAt > $1.loggedAt }
+        case .highestProtein:
+            return filtered.sorted {
+                if $0.grams == $1.grams { return $0.loggedAt > $1.loggedAt }
+                return $0.grams > $1.grams
+            }
+        }
+    }
+
+    func replaceAllEntries(with newEntries: [ProteinEntry]) {
+        entries = newEntries
+    }
+
+    func importEntries(_ newEntries: [ProteinEntry], merging: Bool) {
+        if merging {
+            let existingIDs = Set(entries.map(\.id))
+            entries.append(contentsOf: newEntries.filter { !existingIDs.contains($0.id) })
+        } else {
+            entries = newEntries
+        }
     }
 
     /// Daily totals ending today, oldest first.

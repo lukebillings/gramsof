@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import StoreKit
 
 @Observable
 final class OnboardingViewModel {
@@ -12,10 +13,11 @@ final class OnboardingViewModel {
 
     private let state: OnboardingState
     private let store: ProteinStore
+    let subscriptions: SubscriptionStore
 
     var step: Step = .goal
     var selectedGoal: OnboardingGoal?
-    var selectedPlan: SubscriptionPlan = .annual
+    var selectedProductID: String?
     /// Starts empty so the user types their own target on the daily goal step.
     var dailyGoal: Int? {
         didSet {
@@ -35,16 +37,26 @@ final class OnboardingViewModel {
         return goalRange.contains(dailyGoal)
     }
 
-    init(state: OnboardingState, store: ProteinStore) {
+    var offers: [SubscriptionOffer] {
+        subscriptions.orderedProducts.map { subscriptions.offer(for: $0) }
+    }
+
+    var selectedProduct: Product? {
+        guard let selectedProductID else { return subscriptions.orderedProducts.first }
+        return subscriptions.products.first { $0.id == selectedProductID }
+            ?? subscriptions.orderedProducts.first
+    }
+
+    init(state: OnboardingState, store: ProteinStore, subscriptions: SubscriptionStore) {
         self.state = state
         self.store = store
+        self.subscriptions = subscriptions
         selectedGoal = state.goal
         dailyGoal = nil
         remindersEnabled = state.remindersEnabled
     }
 
     var goals: [OnboardingGoal] { OnboardingGoal.allCases }
-    var plans: [SubscriptionPlan] { SubscriptionPlan.allCases }
 
     var suggestedDailyGoal: Int {
         guard let selectedGoal else { return 150 }
@@ -70,14 +82,37 @@ final class OnboardingViewModel {
     func select(_ goal: OnboardingGoal) {
         selectedGoal = goal
         step = .paywall
+        Task { await loadSubscriptionsIfNeeded() }
     }
 
-    func select(_ plan: SubscriptionPlan) {
-        selectedPlan = plan
+    func select(productID: String) {
+        selectedProductID = productID
     }
 
-    func continueFromPaywall() {
-        step = .dailyTarget
+    func loadSubscriptionsIfNeeded() async {
+        if subscriptions.products.isEmpty {
+            await subscriptions.loadProducts()
+        }
+        if selectedProductID == nil {
+            selectedProductID = subscriptions.orderedProducts.first?.id
+        }
+    }
+
+    func continueFromPaywall() async {
+        if subscriptions.isSubscribed {
+            step = .dailyTarget
+            return
+        }
+
+        guard let product = selectedProduct else {
+            await subscriptions.loadProducts()
+            return
+        }
+
+        let success = await subscriptions.purchase(product)
+        if success || subscriptions.isSubscribed {
+            step = .dailyTarget
+        }
     }
 
     func continueFromDailyTarget() {
@@ -90,17 +125,20 @@ final class OnboardingViewModel {
 
     func backToPaywall() {
         step = .paywall
+        Task { await loadSubscriptionsIfNeeded() }
     }
 
     func backToDailyTarget() {
         step = .dailyTarget
     }
 
-    /// StoreKit restore is not wired yet — placeholder for the paywall control.
-    func restorePurchases() async {}
+    func restorePurchases() async {
+        await subscriptions.restorePurchases()
+        if subscriptions.isSubscribed {
+            step = .dailyTarget
+        }
+    }
 
-    /// Purchases are not wired up yet, so this only records the choice and lets
-    /// the user into the app.
     func finish() async {
         store.dailyGoal = dailyGoal ?? suggestedDailyGoal
 

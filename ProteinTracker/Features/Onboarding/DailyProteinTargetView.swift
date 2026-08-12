@@ -92,6 +92,6 @@ struct DailyProteinTargetView: View {
 #Preview {
     ZStack {
         AppTheme.background
-        DailyProteinTargetView(viewModel: OnboardingViewModel(state: .preview, store: .seeded))
+        DailyProteinTargetView(viewModel: OnboardingViewModel(state: .preview, store: .seeded, subscriptions: SubscriptionStore()))
     }
 }

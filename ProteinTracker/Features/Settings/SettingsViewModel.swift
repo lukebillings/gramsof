@@ -7,19 +7,24 @@ final class SettingsViewModel {
     let onboarding: OnboardingState
     let customFoods: CustomFoodDirectory
     let appearance: AppearanceSettings
+    let haptics: HapticSettings
 
     let goalRange = 60...300
+    var importErrorMessage: String?
+    var importSuccessMessage: String?
 
     init(
         store: ProteinStore,
         onboarding: OnboardingState,
         customFoods: CustomFoodDirectory,
-        appearance: AppearanceSettings
+        appearance: AppearanceSettings,
+        haptics: HapticSettings
     ) {
         self.store = store
         self.onboarding = onboarding
         self.customFoods = customFoods
         self.appearance = appearance
+        self.haptics = haptics
     }
 
     var dailyGoal: Int {
@@ -30,6 +35,11 @@ final class SettingsViewModel {
     var showsRemainingOnRing: Bool {
         get { store.showsRemainingOnRing }
         set { store.showsRemainingOnRing = newValue }
+    }
+
+    var hapticsEnabled: Bool {
+        get { haptics.isEnabled }
+        set { haptics.isEnabled = newValue }
     }
 
     var remindersEnabled: Bool {
@@ -88,10 +98,52 @@ final class SettingsViewModel {
 
     var termsAndConditionsURL: URL { LegalLinks.termsAndConditions }
     var privacyPolicyURL: URL { LegalLinks.privacyPolicy }
-    var termsOfServiceURL: URL { LegalLinks.termsOfService }
+    var termsOfUseURL: URL { LegalLinks.termsOfUse }
+    var featureRequestURL: URL { LegalLinks.featureRequest }
+
+    func csvExportData() -> Data {
+        Data(ProteinDataExport.csv(from: store.entries).utf8)
+    }
+
+    @MainActor
+    func pdfExportData() -> Data {
+        ProteinDataExport.pdfData(from: store.entries, dailyGoal: store.dailyGoal)
+    }
+
+    @MainActor
+    func writeExportFile(csv: Bool) throws -> URL {
+        let filename = csv ? "gramsof-log.csv" : "gramsof-log.pdf"
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        let data = csv ? csvExportData() : pdfExportData()
+        try data.write(to: url, options: .atomic)
+        return url
+    }
+
+    func importCSV(from url: URL, merging: Bool) {
+        do {
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer {
+                if accessing { url.stopAccessingSecurityScopedResource() }
+            }
+
+            let text = try String(contentsOf: url, encoding: .utf8)
+            let entries = try ProteinDataExport.parseCSV(text)
+            store.importEntries(entries, merging: merging)
+            importErrorMessage = nil
+            importSuccessMessage = merging
+                ? "Imported \(entries.count) entries."
+                : "Replaced log with \(entries.count) entries."
+            AppHaptics.notification(.success)
+        } catch {
+            importSuccessMessage = nil
+            importErrorMessage = error.localizedDescription
+            AppHaptics.notification(.error)
+        }
+    }
 
     func resetToday() {
         store.removeToday()
+        AppHaptics.notification(.warning)
     }
 
     func resetAllData() {
@@ -99,6 +151,7 @@ final class SettingsViewModel {
         store.dailyGoal = 150
         store.showsRemainingOnRing = true
         customFoods.removeAll()
+        AppHaptics.notification(.warning)
     }
 
     func restartOnboarding() {

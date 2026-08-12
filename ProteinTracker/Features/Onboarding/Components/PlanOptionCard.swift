@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PlanOptionCard: View {
-    let plan: SubscriptionPlan
+    let offer: SubscriptionOffer
     let isSelected: Bool
     let action: () -> Void
 
@@ -12,15 +12,14 @@ struct PlanOptionCard: View {
                     .font(.title3)
                     .foregroundStyle(isSelected ? AppTheme.emerald : AppTheme.ink.opacity(0.2))
 
-                switch plan {
-                case .annual:
-                    annualContent
-                case .monthly:
+                if offer.plan == .yearly {
+                    yearlyContent
+                } else {
                     monthlyContent
                 }
             }
             .padding(16)
-            .padding(.top, plan.badge == nil ? 0 : 6)
+            .padding(.top, offer.badge == nil ? 0 : 6)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
@@ -30,7 +29,7 @@ struct PlanOptionCard: View {
                 .strokeBorder(AppTheme.emerald.opacity(isSelected ? 1 : 0), lineWidth: 2)
         }
         .overlay(alignment: .topTrailing) {
-            if let badge = plan.badge {
+            if let badge = offer.badge {
                 Text(badge)
                     .font(.caption2.weight(.bold))
                     .foregroundStyle(AppTheme.forest)
@@ -48,29 +47,35 @@ struct PlanOptionCard: View {
         .accessibilityLabel(accessibilityLabel)
     }
 
-    private var annualContent: some View {
+    private var yearlyContent: some View {
         HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("7 days free trial")
-                    .font(.body.weight(.bold))
-                    .foregroundStyle(AppTheme.ink)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
+                if let days = offer.freeTrialDays {
+                    Text("\(days) days free trial")
+                        .font(.body.weight(.bold))
+                        .foregroundStyle(AppTheme.ink)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
 
-                Text(plan.title)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.ink.opacity(0.65))
+                    Text(offer.title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppTheme.ink.opacity(0.65))
+                } else {
+                    Text(offer.title)
+                        .font(.body.weight(.bold))
+                        .foregroundStyle(AppTheme.ink)
+                }
             }
 
             Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text("£49.99 per year")
+                Text(offer.priceSummary)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(AppTheme.ink.opacity(0.45))
                     .multilineTextAlignment(.trailing)
 
-                if let effective = plan.effectiveMonthlyLabel {
+                if let effective = offer.effectiveMonthlyPrice {
                     Text(effective)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(AppTheme.ink.opacity(0.45))
@@ -81,13 +86,13 @@ struct PlanOptionCard: View {
 
     private var monthlyContent: some View {
         HStack(alignment: .center, spacing: 12) {
-            Text(plan.title)
+            Text(offer.title)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(AppTheme.ink.opacity(0.65))
 
             Spacer(minLength: 8)
 
-            Text(plan.priceSummary)
+            Text(offer.priceSummary)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(AppTheme.ink.opacity(0.45))
                 .multilineTextAlignment(.trailing)
@@ -95,20 +100,8 @@ struct PlanOptionCard: View {
     }
 
     private var accessibilityLabel: String {
-        switch plan {
-        case .annual:
-            return "7 days free trial, Yearly, Save 58% vs monthly, £49.99 per year"
-        case .monthly:
-            return "\(plan.title), \(plan.priceSummary)"
-        }
+        let trial = offer.freeTrialDays.map { "\($0) days free trial, " } ?? ""
+        let badge = offer.badge.map { ", \($0)" } ?? ""
+        return "\(trial)\(offer.title)\(badge), \(offer.priceSummary)"
     }
-}
-
-#Preview {
-    VStack(spacing: 12) {
-        PlanOptionCard(plan: .annual, isSelected: true) {}
-        PlanOptionCard(plan: .monthly, isSelected: false) {}
-    }
-    .padding()
-    .background(AppTheme.background)
 }

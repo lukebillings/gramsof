@@ -3,8 +3,14 @@ import SwiftUI
 struct OnboardingFlowView: View {
     @State private var viewModel: OnboardingViewModel
 
-    init(state: OnboardingState, store: ProteinStore) {
-        _viewModel = State(initialValue: OnboardingViewModel(state: state, store: store))
+    init(state: OnboardingState, store: ProteinStore, subscriptions: SubscriptionStore) {
+        _viewModel = State(
+            initialValue: OnboardingViewModel(
+                state: state,
+                store: store,
+                subscriptions: subscriptions
+            )
+        )
     }
 
     var body: some View {
@@ -43,5 +49,5 @@ struct OnboardingFlowView: View {
 }
 
 #Preview {
-    OnboardingFlowView(state: .preview, store: .seeded)
+    OnboardingFlowView(state: .preview, store: .seeded, subscriptions: SubscriptionStore())
 }

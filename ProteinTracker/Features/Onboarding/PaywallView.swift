@@ -34,6 +34,9 @@ struct PaywallView: View {
             .padding(.bottom, 88)
         }
         .safeAreaInset(edge: .bottom) { checkoutBar }
+        .task {
+            await viewModel.loadSubscriptionsIfNeeded()
+        }
     }
 
     private var backButton: some View {
@@ -82,11 +85,38 @@ struct PaywallView: View {
         }
     }
 
+    @ViewBuilder
     private var plansSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ForEach(viewModel.plans) { plan in
-                PlanOptionCard(plan: plan, isSelected: viewModel.selectedPlan == plan) {
-                    viewModel.select(plan)
+        let subscriptions = viewModel.subscriptions
+
+        if subscriptions.isLoading && viewModel.offers.isEmpty {
+            ProgressView()
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+        } else if let error = subscriptions.loadError, viewModel.offers.isEmpty {
+            VStack(spacing: 12) {
+                Text(error)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.ink.opacity(0.6))
+                    .multilineTextAlignment(.center)
+
+                Button("Try again") {
+                    Task { await subscriptions.loadProducts() }
+                }
+                .font(.subheadline.weight(.semibold))
+                .tint(AppTheme.emerald)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+        } else {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(viewModel.offers) { offer in
+                    PlanOptionCard(
+                        offer: offer,
+                        isSelected: viewModel.selectedProduct?.id == offer.id
+                    ) {
+                        viewModel.select(productID: offer.id)
+                    }
                 }
             }
         }
@@ -94,6 +124,13 @@ struct PaywallView: View {
 
     private var checkoutBar: some View {
         VStack(spacing: 10) {
+            if let purchaseError = viewModel.subscriptions.purchaseError {
+                Text(purchaseError)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.red.opacity(0.85))
+                    .multilineTextAlignment(.center)
+            }
+
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(AppTheme.emerald)
@@ -105,15 +142,26 @@ struct PaywallView: View {
             legalSmallPrint
 
             Button {
-                viewModel.continueFromPaywall()
+                Task { await viewModel.continueFromPaywall() }
             } label: {
-                Text("Continue")
-                    .font(.body.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
+                Group {
+                    if viewModel.subscriptions.isPurchasing {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Text("Continue")
+                    }
+                }
+                .font(.body.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
             }
             .buttonStyle(.glassProminent)
             .tint(AppTheme.emerald)
+            .disabled(
+                viewModel.subscriptions.isPurchasing
+                    || (viewModel.selectedProduct == nil && !viewModel.subscriptions.isSubscribed)
+            )
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
@@ -122,7 +170,7 @@ struct PaywallView: View {
 
     private var legalSmallPrint: some View {
         VStack(spacing: 6) {
-            Text("By continuing, you agree to our Terms and Conditions, Privacy Policy, and Terms of Service.")
+            Text("By continuing, you agree to our Terms and Conditions, Privacy Policy, and Terms of Use.")
                 .font(.caption2)
                 .foregroundStyle(AppTheme.ink.opacity(0.45))
                 .multilineTextAlignment(.center)
@@ -135,7 +183,7 @@ struct PaywallView: View {
                 Link("Privacy Policy", destination: LegalLinks.privacyPolicy)
                 Text("·")
                     .foregroundStyle(AppTheme.ink.opacity(0.3))
-                Link("Terms of Service", destination: LegalLinks.termsOfService)
+                Link("Terms of Use", destination: LegalLinks.termsOfUse)
             }
             .font(.caption2.weight(.medium))
             .tint(AppTheme.emerald.opacity(0.85))
@@ -148,6 +196,7 @@ struct PaywallView: View {
             .font(.caption2.weight(.medium))
             .foregroundStyle(AppTheme.ink.opacity(0.45))
             .buttonStyle(.plain)
+            .disabled(viewModel.subscriptions.isPurchasing)
         }
         .padding(.bottom, 2)
     }
@@ -158,7 +207,11 @@ struct PaywallView: View {
         AppTheme.background
 
         PaywallView(viewModel: {
-            let viewModel = OnboardingViewModel(state: .preview, store: .seeded)
+            let viewModel = OnboardingViewModel(
+                state: .preview,
+                store: .seeded,
+                subscriptions: SubscriptionStore()
+            )
             viewModel.selectedGoal = .buildMuscle
             return viewModel
         }())
