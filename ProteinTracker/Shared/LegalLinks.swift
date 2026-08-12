@@ -1,7 +1,10 @@
 import Foundation
 
 enum LegalLinks {
-    static let termsAndConditions = URL(string: "https://gramsof.app/terms")!
-    static let privacyPolicy = URL(string: "https://gramsof.app/privacy")!
-    static let termsOfService = URL(string: "https://gramsof.app/terms-of-service")!
+    private static let site = "https://lukebillings.github.io/gramsof"
+
+    static let termsAndConditions = URL(string: "\(site)/termsandconditions/")!
+    static let privacyPolicy = URL(string: "\(site)/privacypolicy/")!
+    static let termsOfService = URL(string: "\(site)/termsandconditions/")!
+    static let featureRequest = URL(string: "mailto:hello@gramsof.app?subject=Gramsof%20feature%20request")!
 }
