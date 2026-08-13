@@ -1,7 +1,7 @@
 import Foundation
 
 /// Product identifiers configured in App Store Connect.
-/// Prices, trials, and localized titles come from StoreKit — not from this file.
+/// Paywall display prices are hardcoded in `SubscriptionOffer`; purchase still uses StoreKit.
 enum SubscriptionPlan: String, CaseIterable, Identifiable {
     case yearly
     case monthly

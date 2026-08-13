@@ -3,7 +3,7 @@ import Observation
 import StoreKit
 
 /// Loads subscription products from App Store Connect via StoreKit 2 and tracks
-/// the current entitlement. Display prices and offers always come from `Product`.
+/// the current entitlement. Paywall copy is hardcoded in `SubscriptionOffer`.
 @Observable
 @MainActor
 final class SubscriptionStore {
@@ -14,8 +14,6 @@ final class SubscriptionStore {
     private(set) var purchaseError: String?
     private(set) var isSubscribed = false
 
-    private var updatesTask: Task<Void, Never>?
-
     /// Yearly first, then monthly — matching App Store Connect display order.
     var orderedProducts: [Product] {
         SubscriptionPlan.allCases.compactMap { plan in
@@ -24,16 +22,14 @@ final class SubscriptionStore {
     }
 
     init() {
-        updatesTask = Task { [weak self] in
+        // App-lifetime store: listen for StoreKit updates without retaining a
+        // cancellable task (avoids MainActor `deinit` isolation issues).
+        Task { [weak self] in
             for await _ in Transaction.updates {
                 await self?.refreshEntitlements()
             }
         }
         Task { await refreshEntitlements() }
-    }
-
-    deinit {
-        updatesTask?.cancel()
     }
 
     func loadProducts() async {
@@ -55,7 +51,7 @@ final class SubscriptionStore {
         }
     }
 
-    func product(for plan: SubscriptionPlan) -> Product? {
+    func storeProduct(for plan: SubscriptionPlan) -> Product? {
         products.first { $0.id == plan.productID }
     }
 
@@ -109,31 +105,8 @@ final class SubscriptionStore {
         isSubscribed = active
     }
 
-    // MARK: - Display helpers from StoreKit products
-
     func offer(for product: Product) -> SubscriptionOffer {
-        SubscriptionOffer(
-            product: product,
-            savingsPercentVersusMonthly: savingsPercent(for: product),
-            effectiveMonthlyPrice: effectiveMonthlyPrice(for: product)
-        )
-    }
-
-    private func savingsPercent(for product: Product) -> Int? {
-        guard product.id == SubscriptionPlan.yearly.productID,
-              let monthly = product(for: .monthly),
-              monthly.price > 0 else { return nil }
-
-        let yearlyPerMonth = product.price / 12
-        let ratio = NSDecimalNumber(decimal: yearlyPerMonth / monthly.price).doubleValue
-        let percent = Int((1 - ratio) * 100)
-        return percent > 0 ? percent : nil
-    }
-
-    private func effectiveMonthlyPrice(for product: Product) -> String? {
-        guard product.id == SubscriptionPlan.yearly.productID else { return nil }
-        let monthly = product.price / 12
-        return "~ \(monthly.formatted(product.priceFormatStyle)) a month"
+        SubscriptionOffer(product: product)
     }
 
     private func rank(for productID: String) -> Int {
@@ -150,11 +123,10 @@ final class SubscriptionStore {
     }
 }
 
-/// UI-facing fields derived from a StoreKit `Product`.
+/// UI-facing fields for a StoreKit `Product`. Display copy is hardcoded so the
+/// paywall stays consistent regardless of StoreKit localization timing.
 struct SubscriptionOffer: Identifiable {
     let product: Product
-    let savingsPercentVersusMonthly: Int?
-    let effectiveMonthlyPrice: String?
 
     var id: String { product.id }
 
@@ -171,45 +143,22 @@ struct SubscriptionOffer: Identifiable {
     }
 
     var priceSummary: String {
-        "\(product.displayPrice) \(periodSuffix)"
+        switch plan {
+        case .yearly: "£29.99 per year"
+        case .monthly: "£9.99 per month"
+        case nil: product.displayPrice
+        }
     }
 
     var freeTrialDays: Int? {
-        guard let offer = product.subscription?.introductoryOffer,
-              offer.paymentMode == .freeTrial else { return nil }
-        return days(in: offer.period)
+        plan == .yearly ? 3 : nil
+    }
+
+    var effectiveMonthlyPrice: String? {
+        plan == .yearly ? "~ £2.50 a month" : nil
     }
 
     var badge: String? {
-        guard let savingsPercentVersusMonthly else { return nil }
-        return "Save \(savingsPercentVersusMonthly)% vs monthly"
-    }
-
-    private var periodSuffix: String {
-        guard let period = product.subscription?.subscriptionPeriod else {
-            return ""
-        }
-        switch period.unit {
-        case .day:
-            return period.value == 1 ? "per day" : "per \(period.value) days"
-        case .week:
-            return period.value == 1 ? "per week" : "per \(period.value) weeks"
-        case .month:
-            return period.value == 1 ? "per month" : "per \(period.value) months"
-        case .year:
-            return period.value == 1 ? "per year" : "per \(period.value) years"
-        @unknown default:
-            return ""
-        }
-    }
-
-    private func days(in period: Product.SubscriptionPeriod) -> Int {
-        switch period.unit {
-        case .day: period.value
-        case .week: period.value * 7
-        case .month: period.value * 30
-        case .year: period.value * 365
-        @unknown default: period.value
-        }
+        plan == .yearly ? "Save 75% vs monthly" : nil
     }
 }
