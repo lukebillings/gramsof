@@ -3,7 +3,7 @@ import Observation
 import StoreKit
 
 /// Loads subscription products from App Store Connect via StoreKit 2 and tracks
-/// the current entitlement. Paywall copy is hardcoded in `SubscriptionOffer`.
+/// the current entitlement. Paywall rows are hardcoded in `SubscriptionOffer`.
 @Observable
 @MainActor
 final class SubscriptionStore {
@@ -13,13 +13,6 @@ final class SubscriptionStore {
     private(set) var isPurchasing = false
     private(set) var purchaseError: String?
     private(set) var isSubscribed = false
-
-    /// Yearly first, then monthly — matching App Store Connect display order.
-    var orderedProducts: [Product] {
-        SubscriptionPlan.allCases.compactMap { plan in
-            products.first { $0.id == plan.productID }
-        }
-    }
 
     init() {
         // App-lifetime store: listen for StoreKit updates without retaining a
@@ -105,10 +98,6 @@ final class SubscriptionStore {
         isSubscribed = active
     }
 
-    func offer(for product: Product) -> SubscriptionOffer {
-        SubscriptionOffer(product: product)
-    }
-
     private func rank(for productID: String) -> Int {
         SubscriptionPlan.allCases.firstIndex { $0.productID == productID } ?? .max
     }
@@ -120,45 +109,5 @@ final class SubscriptionStore {
         case .verified(let value):
             return value
         }
-    }
-}
-
-/// UI-facing fields for a StoreKit `Product`. Display copy is hardcoded so the
-/// paywall stays consistent regardless of StoreKit localization timing.
-struct SubscriptionOffer: Identifiable {
-    let product: Product
-
-    var id: String { product.id }
-
-    var plan: SubscriptionPlan? {
-        SubscriptionPlan.plan(forProductID: product.id)
-    }
-
-    var title: String {
-        switch plan {
-        case .yearly: "Yearly"
-        case .monthly: "Monthly"
-        case nil: product.displayName
-        }
-    }
-
-    var priceSummary: String {
-        switch plan {
-        case .yearly: "£29.99 per year"
-        case .monthly: "£9.99 per month"
-        case nil: product.displayPrice
-        }
-    }
-
-    var freeTrialDays: Int? {
-        plan == .yearly ? 3 : nil
-    }
-
-    var effectiveMonthlyPrice: String? {
-        plan == .yearly ? "~ £2.50 a month" : nil
-    }
-
-    var badge: String? {
-        plan == .yearly ? "Save 75% vs monthly" : nil
     }
 }

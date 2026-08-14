@@ -24,7 +24,7 @@ struct PaywallView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                backButton
+                navigationRow
                 header
                 benefitsGrid
                 plansSection
@@ -39,18 +39,35 @@ struct PaywallView: View {
         }
     }
 
-    private var backButton: some View {
-        Button {
-            viewModel.backToGoal()
-        } label: {
-            Image(systemName: "chevron.left")
-                .font(.caption.weight(.semibold))
-                .padding(4)
+    private var navigationRow: some View {
+        HStack {
+            Button {
+                viewModel.backToGoal()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.caption.weight(.semibold))
+                    .padding(4)
+            }
+            .buttonStyle(.glass)
+            .tint(AppTheme.emerald)
+            .accessibilityLabel("Back to goals")
+            .controlSize(.small)
+
+            Spacer()
+
+            Button {
+                viewModel.skipPaywall()
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .padding(4)
+            }
+            .buttonStyle(.glass)
+            .tint(AppTheme.emerald)
+            .accessibilityLabel("Continue without purchasing")
+            .controlSize(.small)
+            .disabled(viewModel.subscriptions.isPurchasing)
         }
-        .buttonStyle(.glass)
-        .tint(AppTheme.emerald)
-        .accessibilityLabel("Back to goals")
-        .controlSize(.small)
     }
 
     private var header: some View {
@@ -85,38 +102,14 @@ struct PaywallView: View {
         }
     }
 
-    @ViewBuilder
     private var plansSection: some View {
-        let subscriptions = viewModel.subscriptions
-
-        if subscriptions.isLoading && viewModel.offers.isEmpty {
-            ProgressView()
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
-        } else if let error = subscriptions.loadError, viewModel.offers.isEmpty {
-            VStack(spacing: 12) {
-                Text(error)
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.ink.opacity(0.6))
-                    .multilineTextAlignment(.center)
-
-                Button("Try again") {
-                    Task { await subscriptions.loadProducts() }
-                }
-                .font(.subheadline.weight(.semibold))
-                .tint(AppTheme.emerald)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-        } else {
-            VStack(alignment: .leading, spacing: 12) {
-                ForEach(viewModel.offers) { offer in
-                    PlanOptionCard(
-                        offer: offer,
-                        isSelected: viewModel.selectedProduct?.id == offer.id
-                    ) {
-                        viewModel.select(productID: offer.id)
-                    }
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(viewModel.offers) { offer in
+                PlanOptionCard(
+                    offer: offer,
+                    isSelected: viewModel.selectedPlan == offer.plan
+                ) {
+                    viewModel.select(productID: offer.id)
                 }
             }
         }
@@ -124,11 +117,19 @@ struct PaywallView: View {
 
     private var checkoutBar: some View {
         VStack(spacing: 10) {
-            if let purchaseError = viewModel.subscriptions.purchaseError {
-                Text(purchaseError)
+            if let checkoutError {
+                Text(checkoutError)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.red.opacity(0.85))
                     .multilineTextAlignment(.center)
+
+                if viewModel.selectedProduct == nil, viewModel.subscriptions.loadError != nil {
+                    Button("Try again") {
+                        Task { await viewModel.subscriptions.loadProducts() }
+                    }
+                    .font(.caption.weight(.semibold))
+                    .tint(AppTheme.emerald)
+                }
             }
 
             HStack(spacing: 6) {
@@ -145,7 +146,7 @@ struct PaywallView: View {
                 Task { await viewModel.continueFromPaywall() }
             } label: {
                 Group {
-                    if viewModel.subscriptions.isPurchasing {
+                    if isCheckoutBusy {
                         ProgressView()
                             .tint(.white)
                     } else {
@@ -166,6 +167,18 @@ struct PaywallView: View {
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 8)
+    }
+
+    private var isCheckoutBusy: Bool {
+        viewModel.subscriptions.isPurchasing
+            || (viewModel.subscriptions.isLoading
+                && viewModel.selectedProduct == nil
+                && !viewModel.subscriptions.isSubscribed)
+    }
+
+    private var checkoutError: String? {
+        viewModel.subscriptions.purchaseError
+            ?? (viewModel.selectedProduct == nil ? viewModel.subscriptions.loadError : nil)
     }
 
     private var legalSmallPrint: some View {

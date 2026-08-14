@@ -40,13 +40,15 @@ final class OnboardingViewModel {
     }
 
     var offers: [SubscriptionOffer] {
-        subscriptions.orderedProducts.map { subscriptions.offer(for: $0) }
+        SubscriptionOffer.all
+    }
+
+    var selectedPlan: SubscriptionPlan {
+        SubscriptionPlan.plan(forProductID: selectedProductID ?? "") ?? .yearly
     }
 
     var selectedProduct: Product? {
-        guard let selectedProductID else { return subscriptions.orderedProducts.first }
-        return subscriptions.products.first { $0.id == selectedProductID }
-            ?? subscriptions.orderedProducts.first
+        subscriptions.storeProduct(for: selectedPlan)
     }
 
     init(
@@ -60,6 +62,7 @@ final class OnboardingViewModel {
         self.subscriptions = subscriptions
         self.engagement = engagement
         selectedGoal = state.goal
+        selectedProductID = SubscriptionPlan.yearly.productID
         dailyGoal = nil
         remindersEnabled = state.remindersEnabled
     }
@@ -101,9 +104,6 @@ final class OnboardingViewModel {
         if subscriptions.products.isEmpty {
             await subscriptions.loadProducts()
         }
-        if selectedProductID == nil {
-            selectedProductID = subscriptions.orderedProducts.first?.id
-        }
     }
 
     func continueFromPaywall() async {
@@ -112,15 +112,21 @@ final class OnboardingViewModel {
             return
         }
 
-        guard let product = selectedProduct else {
+        if selectedProduct == nil {
             await subscriptions.loadProducts()
-            return
         }
+
+        guard let product = selectedProduct else { return }
 
         let success = await subscriptions.purchase(product)
         if success || subscriptions.isSubscribed {
             step = .dailyTarget
         }
+    }
+
+    /// Skip purchase and continue onboarding (e.g. during testing or soft paywall).
+    func skipPaywall() {
+        step = .dailyTarget
     }
 
     func continueFromDailyTarget() {
