@@ -6,33 +6,32 @@ struct QuickAddTile: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .top, spacing: 8) {
-                    Text(item.emoji)
-                        .font(.title3)
-                        .frame(width: 34, height: 34)
-                        .background(AppTheme.mint.opacity(0.45), in: .circle)
-
-                    Spacer(minLength: 0)
-
-                    Text("+\(item.grams)g")
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(AppTheme.forest)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(AppTheme.mint, in: .capsule)
-                }
+            VStack(spacing: 6) {
+                Text(item.emoji)
+                    .font(.title3)
+                    .frame(width: 34, height: 34)
+                    .background(AppTheme.mint.opacity(0.45), in: .circle)
 
                 Text(item.portionDescription)
-                    .font(.caption.weight(.semibold))
+                    .font(.caption2.weight(.semibold))
                     .foregroundStyle(AppTheme.ink)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.85)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.7)
+                    .frame(maxWidth: .infinity, minHeight: 28, alignment: .top)
+
+                Spacer(minLength: 0)
+
+                Text("+\(item.grams)g")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(AppTheme.forest)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(AppTheme.mint, in: .capsule)
             }
-            .padding(12)
-            .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity, minHeight: 118, maxHeight: .infinity, alignment: .top)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
@@ -42,7 +41,7 @@ struct QuickAddTile: View {
 }
 
 #Preview {
-    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
+    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
         ForEach(QuickAddItem.defaults) { item in
             QuickAddTile(item: item) {}
         }

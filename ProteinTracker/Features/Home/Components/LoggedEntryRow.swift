@@ -1,5 +1,26 @@
 import SwiftUI
 
+struct LoggedEntryColumnHeader: View {
+    var body: some View {
+        HStack {
+            Text("Food")
+
+            Spacer(minLength: 8)
+
+            Text("Grams of protein")
+                .multilineTextAlignment(.trailing)
+                .lineLimit(2)
+                .minimumScaleFactor(0.85)
+        }
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(AppTheme.ink.opacity(0.45))
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 6)
+        .accessibilityElement(children: .combine)
+    }
+}
+
 struct LoggedEntryRow: View {
     let entry: ProteinEntry
     var onTap: (() -> Void)? = nil
@@ -30,6 +51,7 @@ struct LoggedEntryRow: View {
                     .foregroundStyle(AppTheme.emerald)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
+                    .accessibilityLabel("\(entry.grams) grams of protein")
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -37,8 +59,8 @@ struct LoggedEntryRow: View {
         }
         .buttonStyle(.plain)
         .disabled(onTap == nil)
-        .accessibilityLabel("\(entry.name), \(entry.grams) grams")
-        .accessibilityHint("Double tap to edit or delete")
+        .accessibilityLabel("\(entry.name), \(entry.grams) grams of protein")
+        .accessibilityHint("Double tap to edit grams of protein or delete")
     }
 }
 

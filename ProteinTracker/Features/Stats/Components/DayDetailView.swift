@@ -80,6 +80,8 @@ struct DayDetailView: View {
                     .glassEffect(.regular, in: .rect(cornerRadius: 22))
             } else {
                 VStack(spacing: 0) {
+                    LoggedEntryColumnHeader()
+
                     ForEach(entries) { entry in
                         LoggedEntryRow(entry: entry)
                         if entry.id != entries.last?.id {

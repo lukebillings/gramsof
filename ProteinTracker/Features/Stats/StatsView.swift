@@ -60,11 +60,15 @@ struct StatsView: View {
     private var chartCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text(viewModel.range == .month ? "Month at a glance" : "Daily protein")
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.ink)
+                if viewModel.range == .month {
+                    monthNavigator
+                } else {
+                    Text("Daily protein")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.ink)
+                }
 
-                Spacer()
+                Spacer(minLength: 8)
 
                 Text("Goal \(viewModel.goal)g")
                     .font(.caption.weight(.medium))
@@ -81,6 +85,42 @@ struct StatsView: View {
         }
         .padding(18)
         .glassEffect(.regular, in: .rect(cornerRadius: 28))
+    }
+
+    private var monthNavigator: some View {
+        HStack(spacing: 4) {
+            Button {
+                viewModel.goToPreviousMonth()
+                AppHaptics.selection()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.caption.weight(.bold))
+                    .frame(width: 28, height: 28)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(AppTheme.forest)
+            .accessibilityLabel("Previous month")
+
+            Text(viewModel.displayedMonthTitle)
+                .font(.headline)
+                .foregroundStyle(AppTheme.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .accessibilityAddTraits(.isHeader)
+
+            Button {
+                viewModel.goToNextMonth()
+                AppHaptics.selection()
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
+                    .frame(width: 28, height: 28)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(viewModel.canGoToNextMonth ? AppTheme.forest : AppTheme.ink.opacity(0.25))
+            .disabled(!viewModel.canGoToNextMonth)
+            .accessibilityLabel("Next month")
+        }
     }
 
     private var weekChart: some View {

@@ -115,6 +115,17 @@ final class ProteinStore {
         }
     }
 
+    /// Every day in the month containing `date`, oldest first.
+    func dailyTotals(inMonth date: Date) -> [DayTotal] {
+        let start = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) ?? date
+        guard let dayCount = calendar.range(of: .day, in: .month, for: start)?.count else { return [] }
+
+        return (0..<dayCount).compactMap { offset in
+            guard let day = calendar.date(byAdding: .day, value: offset, to: start) else { return nil }
+            return DayTotal(date: day, grams: total(on: day))
+        }
+    }
+
     // MARK: - Sample data
 
     static var seeded: ProteinStore {

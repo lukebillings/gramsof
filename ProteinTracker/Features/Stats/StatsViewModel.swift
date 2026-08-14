@@ -19,6 +19,8 @@ final class StatsViewModel {
 
     let store: ProteinStore
     var range: Range = .week
+    /// First day of the month shown in the heatmap. Defaults to this month.
+    var displayedMonth: Date = StatsViewModel.startOfMonth(containing: .now)
 
     init(store: ProteinStore) {
         self.store = store
@@ -27,7 +29,38 @@ final class StatsViewModel {
     var goal: Int { store.dailyGoal }
 
     var totals: [DayTotal] {
-        store.dailyTotals(forLast: range.days)
+        switch range {
+        case .week:
+            store.dailyTotals(forLast: range.days)
+        case .month:
+            store.dailyTotals(inMonth: displayedMonth)
+        }
+    }
+
+    var displayedMonthTitle: String {
+        displayedMonth.formatted(.dateTime.month(.wide).year())
+    }
+
+    var canGoToNextMonth: Bool {
+        let calendar = Calendar.current
+        guard let next = calendar.date(byAdding: .month, value: 1, to: displayedMonth) else { return false }
+        return calendar.compare(next, to: .now, toGranularity: .month) != .orderedDescending
+    }
+
+    func goToPreviousMonth() {
+        guard let previous = Calendar.current.date(byAdding: .month, value: -1, to: displayedMonth) else { return }
+        displayedMonth = Self.startOfMonth(containing: previous)
+    }
+
+    func goToNextMonth() {
+        guard canGoToNextMonth,
+              let next = Calendar.current.date(byAdding: .month, value: 1, to: displayedMonth)
+        else { return }
+        displayedMonth = Self.startOfMonth(containing: next)
+    }
+
+    private static func startOfMonth(containing date: Date) -> Date {
+        Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: date)) ?? date
     }
 
     var averagePerDay: Int {
@@ -61,12 +94,7 @@ final class StatsViewModel {
 
     /// Consecutive days ending today where the goal was met.
     var streak: Int {
-        var count = 0
-        for day in totals.reversed() {
-            guard day.grams >= goal else { break }
-            count += 1
-        }
-        return count
+        store.currentStreak
     }
 
     func entries(on date: Date) -> [ProteinEntry] {

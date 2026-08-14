@@ -152,7 +152,7 @@ private struct EditQuickAddItemView: View {
                         }
                     }
 
-                    TextField("How it appears, e.g. 170g of Greek yogurt", text: $detailText, axis: .vertical)
+                    TextField("How it appears, e.g. 170g Greek yogurt", text: $detailText, axis: .vertical)
                         .lineLimit(2...3)
                         .focused($focusedField, equals: .detail)
                         .onChange(of: detailText) { _, newValue in

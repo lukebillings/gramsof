@@ -27,11 +27,16 @@ struct QuickAddItem: Identifiable, Hashable, Codable {
     var emoji: String { FoodEmoji.forFood(named: name) }
 
     var portionDescription: String {
-        if !detail.isEmpty { return detail }
-        if let portionGrams {
-            return Self.gramsLabel(portionGrams, of: name)
+        let raw: String
+        if !detail.isEmpty {
+            raw = detail
+        } else if let portionGrams {
+            raw = Self.gramsLabel(portionGrams, of: name)
+        } else {
+            return name
         }
-        return name
+
+        return raw.replacingOccurrences(of: "g of ", with: "g ", options: .caseInsensitive)
     }
 
     var canRecalculateProtein: Bool {
@@ -49,11 +54,12 @@ struct QuickAddItem: Identifiable, Hashable, Codable {
     }
 
     private var usesWeightLabel: Bool {
-        detail.lowercased().contains("g of") || detail.isEmpty
+        let lowered = detail.lowercased()
+        return lowered.contains("g of") || lowered.contains("g ") || detail.isEmpty
     }
 
     static func gramsLabel(_ grams: Int, of name: String) -> String {
-        "\(grams)g of \(name)"
+        "\(grams)g \(name)"
     }
 
     static func from(food: FoodItem) -> QuickAddItem {
@@ -75,14 +81,14 @@ struct QuickAddItem: Identifiable, Hashable, Codable {
     static let defaults: [QuickAddItem] = [
         QuickAddItem(
             name: "Greek yogurt",
-            detail: "170g of Greek yogurt",
+            detail: "170g Greek yogurt",
             grams: 17,
             portionGrams: 170,
             proteinPer100g: 10
         ),
         QuickAddItem(
             name: "Chicken breast",
-            detail: "120g of chicken breast",
+            detail: "120g chicken breast",
             grams: 36,
             portionGrams: 120,
             proteinPer100g: 30

@@ -13,11 +13,11 @@ struct HomeView: View {
     @State private var showsGoalCelebration = false
     @State private var showsEditQuickAdd = false
 
-    private let favouriteColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
+    private let favouriteColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
 
     var body: some View {
         homeContent
-            .alert("Edit grams", isPresented: isEditingEntry) {
+            .alert("Edit grams of protein", isPresented: isEditingEntry) {
                 editGramsAlert
             } message: {
                 editGramsMessage
@@ -34,7 +34,7 @@ struct HomeView: View {
             ) {
                 entryActionButtons
             } message: {
-                Text("Update the protein amount or remove this entry.")
+                Text("Update the grams of protein or remove this entry.")
             }
             .sheet(isPresented: $showsEditQuickAdd) {
                 EditQuickAddView(directory: viewModel.quickAdd, customFoods: viewModel.customFoods)
@@ -96,7 +96,7 @@ struct HomeView: View {
 
     @ViewBuilder
     private var editGramsAlert: some View {
-        TextField("Grams", text: $editedGramsText)
+        TextField("Grams of protein", text: $editedGramsText)
             .keyboardType(.numberPad)
 
         Button("Save", action: saveEditedGrams)
@@ -108,7 +108,7 @@ struct HomeView: View {
     @ViewBuilder
     private var editGramsMessage: some View {
         if let entry = entryBeingEdited {
-            Text("Update protein for \(entry.name).")
+            Text("Update the grams of protein for \(entry.name).")
         }
     }
 
@@ -132,7 +132,7 @@ struct HomeView: View {
 
     @ViewBuilder
     private var entryActionButtons: some View {
-        Button("Update grams") {
+        Button("Update grams of protein") {
             guard let entry = entryPendingAction else { return }
             entryPendingAction = nil
             Task { @MainActor in
@@ -321,7 +321,7 @@ struct HomeView: View {
     private var todaySection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
-                sectionHeader("Today's log", subtitle: "Tap an entry to edit grams or delete.")
+                sectionHeader("Today's log", subtitle: "Tap an entry to edit grams of protein or delete.")
 
                 Spacer(minLength: 8)
 
@@ -353,6 +353,8 @@ struct HomeView: View {
                     .glassEffect(.regular, in: .rect(cornerRadius: 24))
             } else {
                 VStack(spacing: 0) {
+                    LoggedEntryColumnHeader()
+
                     ForEach(viewModel.todayEntries) { entry in
                         LoggedEntryRow(entry: entry) {
                             entryPendingAction = entry
