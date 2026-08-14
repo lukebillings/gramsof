@@ -97,15 +97,6 @@ final class ProteinStore {
         entries = newEntries
     }
 
-    func importEntries(_ newEntries: [ProteinEntry], merging: Bool) {
-        if merging {
-            let existingIDs = Set(entries.map(\.id))
-            entries.append(contentsOf: newEntries.filter { !existingIDs.contains($0.id) })
-        } else {
-            entries = newEntries
-        }
-    }
-
     /// Daily totals ending today, oldest first.
     func dailyTotals(forLast days: Int) -> [DayTotal] {
         let today = calendar.startOfDay(for: .now)

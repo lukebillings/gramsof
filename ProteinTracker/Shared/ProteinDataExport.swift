@@ -17,49 +17,6 @@ enum ProteinDataExport {
         return lines.joined(separator: "\n")
     }
 
-    static func parseCSV(_ text: String) throws -> [ProteinEntry] {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
-
-        let rows = text
-            .split(whereSeparator: \.isNewline)
-            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-
-        guard let first = rows.first else { return [] }
-
-        let startIndex = first.lowercased().hasPrefix("id,") || first.lowercased().hasPrefix("name,") ? 1 : 0
-        var entries: [ProteinEntry] = []
-
-        for row in rows.dropFirst(startIndex) {
-            let columns = splitCSVLine(row)
-            guard columns.count >= 3 else {
-                throw ProteinDataError.invalidCSVRow(row)
-            }
-
-            let hasID = columns.count >= 4 && UUID(uuidString: columns[0]) != nil
-            let id = hasID ? UUID(uuidString: columns[0])! : UUID()
-            let nameIndex = hasID ? 1 : 0
-            let gramsIndex = hasID ? 2 : 1
-            let dateIndex = hasID ? 3 : 2
-
-            guard columns.count > dateIndex,
-                  let grams = Int(columns[gramsIndex].trimmingCharacters(in: .whitespacesAndNewlines)),
-                  grams > 0,
-                  let loggedAt = formatter.date(from: columns[dateIndex].trimmingCharacters(in: .whitespacesAndNewlines))
-            else {
-                throw ProteinDataError.invalidCSVRow(row)
-            }
-
-            let name = columns[nameIndex].trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !name.isEmpty else { throw ProteinDataError.invalidCSVRow(row) }
-
-            entries.append(ProteinEntry(id: id, name: name, grams: grams, loggedAt: loggedAt))
-        }
-
-        return entries
-    }
-
     @MainActor
     static func pdfData(from entries: [ProteinEntry], dailyGoal: Int) -> Data {
         let pageWidth: CGFloat = 612
@@ -115,7 +72,7 @@ enum ProteinDataExport {
 
                 drawRow(
                     date: dateFormatter.string(from: entry.loggedAt),
-                    name: entry.name,
+                    name: entry.displayName,
                     grams: "\(entry.grams)g",
                     font: rowFont,
                     color: UIColor.label,
@@ -151,51 +108,5 @@ enum ProteinDataExport {
             return "\"\(value.replacingOccurrences(of: "\"", with: "\"\""))\""
         }
         return value
-    }
-
-    private static func splitCSVLine(_ line: String) -> [String] {
-        var fields: [String] = []
-        var current = ""
-        var inQuotes = false
-        var iterator = line.makeIterator()
-
-        while let char = iterator.next() {
-            if char == "\"" {
-                if inQuotes, let next = iterator.next() {
-                    if next == "\"" {
-                        current.append("\"")
-                    } else {
-                        inQuotes = false
-                        if next == "," {
-                            fields.append(current)
-                            current = ""
-                        } else {
-                            current.append(next)
-                        }
-                    }
-                } else {
-                    inQuotes.toggle()
-                }
-            } else if char == "," && !inQuotes {
-                fields.append(current)
-                current = ""
-            } else {
-                current.append(char)
-            }
-        }
-
-        fields.append(current)
-        return fields
-    }
-}
-
-enum ProteinDataError: LocalizedError {
-    case invalidCSVRow(String)
-
-    var errorDescription: String? {
-        switch self {
-        case .invalidCSVRow(let row):
-            return "Couldn’t read CSV row: \(row)"
-        }
     }
 }

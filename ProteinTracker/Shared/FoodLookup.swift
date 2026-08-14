@@ -8,6 +8,8 @@ struct FoodSuggestion: Identifiable, Hashable {
     var id: String { food.id }
     var name: String { food.name }
     var emoji: String { FoodEmoji.forFood(named: food.name) }
+
+    var logName: String { food.logTitle(portionLabel: portionLabel) }
 }
 
 /// Matches typed text against `FoodDatabase` and works out how much protein the
@@ -116,13 +118,7 @@ enum FoodLookup {
     }
 
     private static func countLabel(_ count: Double, for food: FoodItem) -> String {
-        let amount = format(count)
-
-        // Serving labels can already read as a count ("6 nuggets"), so fall back to
-        // the weight rather than producing "2 x 6 nuggets".
-        guard let unit = food.countUnit else { return "\(amount) x \(format(food.servingGrams))g" }
-
-        return count == 1 ? "1 \(unit)" : "\(amount) \(unit)s"
+        food.countLabel(count)
     }
 
     private static func format(_ value: Double) -> String {

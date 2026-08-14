@@ -39,6 +39,13 @@ struct QuickAddItem: Identifiable, Hashable, Codable {
         return raw.replacingOccurrences(of: "g of ", with: "g ", options: .caseInsensitive)
     }
 
+    /// Food name, or a count-based portion like "1 scoop" / "2 large eggs".
+    var shortcutLabel: String {
+        if usesWeightLabel { return name }
+        if !detail.isEmpty { return detail }
+        return name
+    }
+
     var canRecalculateProtein: Bool {
         proteinPer100g != nil && portionGrams != nil
     }

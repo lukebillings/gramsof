@@ -1,6 +1,5 @@
 import StoreKit
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @Bindable var viewModel: SettingsViewModel
@@ -8,8 +7,6 @@ struct SettingsView: View {
     @State private var confirmResetToday = false
     @State private var confirmResetAll = false
     @State private var resetConfirmation: ResetConfirmation?
-    @State private var isImportingCSV = false
-    @State private var importMerges = true
     @State private var shareItem: ShareableExport?
     @State private var showsEditQuickAdd = false
     @FocusState private var isGoalFocused: Bool
@@ -61,19 +58,6 @@ struct SettingsView: View {
                     }
                 }
                 .navigationTitle("Settings")
-                .fileImporter(
-                    isPresented: $isImportingCSV,
-                    allowedContentTypes: [.commaSeparatedText, .plainText],
-                    allowsMultipleSelection: false
-                ) { result in
-                    switch result {
-                    case .success(let urls):
-                        guard let url = urls.first else { return }
-                        viewModel.importCSV(from: url, merging: importMerges)
-                    case .failure(let error):
-                        viewModel.importErrorMessage = error.localizedDescription
-                    }
-                }
                 .sheet(item: $shareItem) { item in
                     ActivityShareSheet(items: [item.url])
                 }
@@ -117,30 +101,17 @@ struct SettingsView: View {
                     Text(resetConfirmation?.message ?? "")
                 }
                 .alert(
-                    "Import failed",
+                    "Export failed",
                     isPresented: Binding(
-                        get: { viewModel.importErrorMessage != nil },
-                        set: { if !$0 { viewModel.importErrorMessage = nil } }
+                        get: { viewModel.exportErrorMessage != nil },
+                        set: { if !$0 { viewModel.exportErrorMessage = nil } }
                     )
                 ) {
                     Button("OK", role: .cancel) {
-                        viewModel.importErrorMessage = nil
+                        viewModel.exportErrorMessage = nil
                     }
                 } message: {
-                    Text(viewModel.importErrorMessage ?? "")
-                }
-                .alert(
-                    "Import complete",
-                    isPresented: Binding(
-                        get: { viewModel.importSuccessMessage != nil },
-                        set: { if !$0 { viewModel.importSuccessMessage = nil } }
-                    )
-                ) {
-                    Button("OK", role: .cancel) {
-                        viewModel.importSuccessMessage = nil
-                    }
-                } message: {
-                    Text(viewModel.importSuccessMessage ?? "")
+                    Text(viewModel.exportErrorMessage ?? "")
                 }
                 .sheet(isPresented: $showsEditQuickAdd) {
                     EditQuickAddView(directory: viewModel.quickAdd, customFoods: viewModel.customFoods)
@@ -272,13 +243,6 @@ struct SettingsView: View {
     private var dataSection: some View {
         Section {
             Button {
-                importMerges = true
-                isImportingCSV = true
-            } label: {
-                Label("Import CSV", systemImage: "square.and.arrow.down")
-            }
-
-            Button {
                 prepareExport(csv: true)
             } label: {
                 Label("Export CSV", systemImage: "tablecells")
@@ -302,7 +266,7 @@ struct SettingsView: View {
         } header: {
             Text("Data")
         } footer: {
-            Text("Import CSV merges matching rows by id. Export PDF is a printable food log. Reset today clears only this day's log. Reset all removes every entry and your custom foods.")
+            Text("Export PDF is a printable food log. Reset today clears only this day's log. Reset all removes every entry and your custom foods.")
         }
     }
 
@@ -328,7 +292,7 @@ struct SettingsView: View {
             shareItem = ShareableExport(url: url)
             AppHaptics.impact(.light)
         } catch {
-            viewModel.importErrorMessage = error.localizedDescription
+            viewModel.exportErrorMessage = error.localizedDescription
             AppHaptics.notification(.error)
         }
     }

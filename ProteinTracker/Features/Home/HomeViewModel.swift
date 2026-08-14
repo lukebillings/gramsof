@@ -74,7 +74,7 @@ final class HomeViewModel {
     }
 
     func log(_ suggestion: FoodSuggestion) {
-        store.add(ProteinEntry(name: suggestion.name, grams: suggestion.grams))
+        store.add(ProteinEntry(name: suggestion.logName, grams: suggestion.grams))
         draft = ""
         AppHaptics.impact(.medium)
     }

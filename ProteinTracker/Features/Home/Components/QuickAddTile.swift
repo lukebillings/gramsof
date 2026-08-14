@@ -12,22 +12,23 @@ struct QuickAddTile: View {
                     .frame(width: 34, height: 34)
                     .background(AppTheme.mint.opacity(0.45), in: .circle)
 
-                Text(item.portionDescription)
+                Text("+\(item.grams)g")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(AppTheme.forest)
+                    .lineLimit(1)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(AppTheme.mint, in: .capsule)
+
+                Text(item.shortcutLabel)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(AppTheme.ink)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
-                    .frame(maxWidth: .infinity, minHeight: 28, alignment: .top)
+                    .frame(maxWidth: .infinity, alignment: .top)
 
                 Spacer(minLength: 0)
-
-                Text("+\(item.grams)g")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(AppTheme.forest)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                    .background(AppTheme.mint, in: .capsule)
             }
             .padding(.horizontal, 4)
             .padding(.vertical, 10)

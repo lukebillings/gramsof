@@ -12,8 +12,7 @@ final class SettingsViewModel {
     let engagement: AppEngagement
 
     let goalRange = 60...300
-    var importErrorMessage: String?
-    var importSuccessMessage: String?
+    var exportErrorMessage: String?
     /// Set to `true` to ask `RootView` to present the day-1 check-in sheet.
     var presentsDay1CheckIn = false
 
@@ -125,28 +124,6 @@ final class SettingsViewModel {
         let data = csv ? csvExportData() : pdfExportData()
         try data.write(to: url, options: .atomic)
         return url
-    }
-
-    func importCSV(from url: URL, merging: Bool) {
-        do {
-            let accessing = url.startAccessingSecurityScopedResource()
-            defer {
-                if accessing { url.stopAccessingSecurityScopedResource() }
-            }
-
-            let text = try String(contentsOf: url, encoding: .utf8)
-            let entries = try ProteinDataExport.parseCSV(text)
-            store.importEntries(entries, merging: merging)
-            importErrorMessage = nil
-            importSuccessMessage = merging
-                ? "Imported \(entries.count) entries."
-                : "Replaced log with \(entries.count) entries."
-            AppHaptics.notification(.success)
-        } catch {
-            importSuccessMessage = nil
-            importErrorMessage = error.localizedDescription
-            AppHaptics.notification(.error)
-        }
     }
 
     func resetToday() {

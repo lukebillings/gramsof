@@ -36,7 +36,7 @@ struct LoggedEntryRow: View {
                     .background(AppTheme.mint.opacity(0.45), in: .circle)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(entry.name)
+                    Text(entry.displayName)
                         .font(.body.weight(.medium))
                         .foregroundStyle(AppTheme.ink)
                     Text(entry.loggedAt, format: .dateTime.hour().minute())
@@ -59,7 +59,7 @@ struct LoggedEntryRow: View {
         }
         .buttonStyle(.plain)
         .disabled(onTap == nil)
-        .accessibilityLabel("\(entry.name), \(entry.grams) grams of protein")
+        .accessibilityLabel("\(entry.displayName), \(entry.grams) grams of protein")
         .accessibilityHint("Double tap to edit grams of protein or delete")
     }
 }

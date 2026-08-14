@@ -5,6 +5,15 @@ import Foundation
 enum FoodDatabase {
     static let all: [FoodItem] = meat + fish + eggsAndDairy + supplements + plantProtein + grains + breads + vegetables + fruits + everydayExtras
 
+    static func food(matching name: String) -> FoodItem? {
+        let lowered = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !lowered.isEmpty else { return nil }
+        if let exact = all.first(where: { $0.name.lowercased() == lowered }) {
+            return exact
+        }
+        return all.first(where: { $0.aliases.contains(lowered) })
+    }
+
     // MARK: - Meat
 
     private static let meat: [FoodItem] = [

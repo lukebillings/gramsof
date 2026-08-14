@@ -108,7 +108,7 @@ struct HomeView: View {
     @ViewBuilder
     private var editGramsMessage: some View {
         if let entry = entryBeingEdited {
-            Text("Update the grams of protein for \(entry.name).")
+            Text("Update the grams of protein for \(entry.displayName).")
         }
     }
 
