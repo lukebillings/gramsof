@@ -5,14 +5,20 @@ import Observation
 final class HomeViewModel {
     let store: ProteinStore
     let customFoods: CustomFoodDirectory
+    let quickAdd: QuickAddDirectory
     var draft: String = ""
     var foodLogSort: FoodLogSort = .newest
 
-    let favourites: [QuickAddItem] = QuickAddItem.favourites
+    var favourites: [QuickAddItem] { quickAdd.items }
 
-    init(store: ProteinStore, customFoods: CustomFoodDirectory = CustomFoodDirectory()) {
+    init(
+        store: ProteinStore,
+        customFoods: CustomFoodDirectory = CustomFoodDirectory(),
+        quickAdd: QuickAddDirectory = QuickAddDirectory()
+    ) {
         self.store = store
         self.customFoods = customFoods
+        self.quickAdd = quickAdd
     }
 
     var goal: Int { store.dailyGoal }
@@ -51,7 +57,7 @@ final class HomeViewModel {
     // MARK: - Logging
 
     func add(_ item: QuickAddItem) {
-        store.add(ProteinEntry(name: item.name, grams: item.grams))
+        store.add(ProteinEntry(name: item.portionDescription, grams: item.grams))
         AppHaptics.impact(.light)
     }
 

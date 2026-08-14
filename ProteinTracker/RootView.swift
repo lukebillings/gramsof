@@ -24,6 +24,7 @@ struct RootView: View {
         store: ProteinStore,
         onboarding: OnboardingState,
         customFoods: CustomFoodDirectory,
+        quickAdd: QuickAddDirectory,
         appearance: AppearanceSettings,
         haptics: HapticSettings,
         subscriptions: SubscriptionStore,
@@ -34,13 +35,14 @@ struct RootView: View {
         self.appearance = appearance
         self.subscriptions = subscriptions
         self.engagement = engagement
-        _homeViewModel = State(initialValue: HomeViewModel(store: store, customFoods: customFoods))
+        _homeViewModel = State(initialValue: HomeViewModel(store: store, customFoods: customFoods, quickAdd: quickAdd))
         _statsViewModel = State(initialValue: StatsViewModel(store: store))
         _settingsViewModel = State(
             initialValue: SettingsViewModel(
                 store: store,
                 onboarding: onboarding,
                 customFoods: customFoods,
+                quickAdd: quickAdd,
                 appearance: appearance,
                 haptics: haptics,
                 engagement: engagement
@@ -165,6 +167,7 @@ struct RootView: View {
         store: .seeded,
         onboarding: .preview,
         customFoods: .preview,
+        quickAdd: .preview,
         appearance: AppearanceSettings(),
         haptics: HapticSettings(),
         subscriptions: SubscriptionStore(),

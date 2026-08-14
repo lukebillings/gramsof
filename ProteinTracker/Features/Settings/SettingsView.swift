@@ -11,6 +11,8 @@ struct SettingsView: View {
     @State private var isImportingCSV = false
     @State private var importMerges = true
     @State private var shareItem: ShareableExport?
+    @State private var showsEditQuickAdd = false
+    @FocusState private var isGoalFocused: Bool
 
     private struct ShareableExport: Identifiable {
         let id = UUID()
@@ -48,7 +50,16 @@ struct SettingsView: View {
             formContent
                 .scrollContentBackground(.hidden)
                 .background(AppTheme.background)
-                .scrollDismissesKeyboard(.interactively)
+                .scrollDismissesKeyboard(.immediately)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Done") {
+                            isGoalFocused = false
+                        }
+                        .fontWeight(.semibold)
+                    }
+                }
                 .navigationTitle("Settings")
                 .fileImporter(
                     isPresented: $isImportingCSV,
@@ -131,12 +142,16 @@ struct SettingsView: View {
                 } message: {
                     Text(viewModel.importSuccessMessage ?? "")
                 }
+                .sheet(isPresented: $showsEditQuickAdd) {
+                    EditQuickAddView(directory: viewModel.quickAdd, customFoods: viewModel.customFoods)
+                }
         }
     }
 
     private var formContent: some View {
         Form {
             goalSection
+            quickAddSection
             appearanceSection
             remindersSection
             shareSection
@@ -154,6 +169,7 @@ struct SettingsView: View {
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                         .frame(minWidth: 56, alignment: .trailing)
+                        .focused($isGoalFocused)
 
                     Text("g")
                         .foregroundStyle(.secondary)
@@ -165,6 +181,18 @@ struct SettingsView: View {
             Text("Daily goal")
         } footer: {
             Text(LegalLinks.proteinTargetDisclaimer)
+        }
+    }
+
+    private var quickAddSection: some View {
+        Section {
+            Button("Customise shortcuts") {
+                showsEditQuickAdd = true
+            }
+        } header: {
+            Text("Quick add")
+        } footer: {
+            Text("Choose the portions that appear as one-tap shortcuts on Today.")
         }
     }
 
@@ -329,6 +357,7 @@ private struct ActivityShareSheet: UIViewControllerRepresentable {
             store: .seeded,
             onboarding: .preview,
             customFoods: .preview,
+            quickAdd: .preview,
             appearance: AppearanceSettings(),
             haptics: HapticSettings(),
             engagement: .preview

@@ -31,7 +31,7 @@ enum FoodLookup {
         return words
     }()
 
-    static func suggestions(for text: String, including extras: [FoodItem] = []) -> [FoodSuggestion] {
+    static func suggestions(for text: String, including extras: [FoodItem] = [], limit: Int = maxResults) -> [FoodSuggestion] {
         guard let query = Query(text: text) else { return [] }
 
         var matches = self.matches(for: query.name, in: FoodDatabase.all + extras)
@@ -42,7 +42,7 @@ enum FoodLookup {
             matches = self.matches(for: query.strippedName, in: FoodDatabase.all + extras)
         }
 
-        return matches.prefix(maxResults).map { suggestion(for: $0.food, query: query) }
+        return matches.prefix(limit).map { suggestion(for: $0.food, query: query) }
     }
 
     /// The cleaned food name from free text, if it looks like something that could

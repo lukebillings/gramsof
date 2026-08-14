@@ -11,6 +11,7 @@ final class AppEngagement {
         static let hasPromptedFirstGoalReview = "engagement.hasPromptedFirstGoalReview"
         static let lastReviewPromptAt = "engagement.lastReviewPromptAt"
         static let lastReviewGoalHitDay = "engagement.lastReviewGoalHitDay"
+        static let lastGoalCelebrationDay = "engagement.lastGoalCelebrationDay"
     }
 
     private let defaults: UserDefaults
@@ -58,6 +59,16 @@ final class AppEngagement {
         }
     }
 
+    private var lastGoalCelebrationDay: Date? {
+        didSet {
+            if let lastGoalCelebrationDay {
+                defaults.set(lastGoalCelebrationDay, forKey: Key.lastGoalCelebrationDay)
+            } else {
+                defaults.removeObject(forKey: Key.lastGoalCelebrationDay)
+            }
+        }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hasSeenHomeTutorial = defaults.bool(forKey: Key.hasSeenHomeTutorial)
@@ -66,6 +77,7 @@ final class AppEngagement {
         hasPromptedFirstGoalReview = defaults.bool(forKey: Key.hasPromptedFirstGoalReview)
         lastReviewPromptAt = defaults.object(forKey: Key.lastReviewPromptAt) as? Date
         lastReviewGoalHitDay = defaults.object(forKey: Key.lastReviewGoalHitDay) as? Date
+        lastGoalCelebrationDay = defaults.object(forKey: Key.lastGoalCelebrationDay) as? Date
     }
 
     var shouldShowHomeTutorial: Bool {
@@ -119,6 +131,19 @@ final class AppEngagement {
         hasSeenHomeTutorial = false
         hasCompletedDay1CheckIn = false
         completedOnboardingAt = nil
+        lastGoalCelebrationDay = nil
+    }
+
+    /// Call when today’s total first meets or exceeds the daily goal.
+    /// Returns `true` the first time that happens today so the fire celebration can show.
+    @discardableResult
+    func consumeGoalCelebration(on date: Date = .now) -> Bool {
+        let today = calendar.startOfDay(for: date)
+        if let lastGoalCelebrationDay, calendar.isDate(lastGoalCelebrationDay, inSameDayAs: today) {
+            return false
+        }
+        lastGoalCelebrationDay = today
+        return true
     }
 
     /// Call when today’s total first meets or exceeds the daily goal.

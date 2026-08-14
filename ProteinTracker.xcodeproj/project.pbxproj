@@ -12,6 +12,9 @@
 		09EF46BAE9FF52EB01E28EC1 /* DailyReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D0A853AA716EAFA6D2E528 /* DailyReminderScheduler.swift */; };
 		1296DF190D322AD19ACF2319 /* ProteinTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DA3C2F247A8E2213767105 /* ProteinTrackerApp.swift */; };
 		19CBCA99F8AAF4B555ACB9BC /* QuickAddItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89FBDBEE2D4BE3411921BD8 /* QuickAddItem.swift */; };
+		1A8F3C92E4B06D17C5A8294E /* GoalReachedCelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E91B4A7C0583F1E90B4C7 /* GoalReachedCelebrationView.swift */; };
+		52448FAD545D4A77AB20A8DC /* QuickAddDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFE09DDB227484C8324D115 /* QuickAddDirectory.swift */; };
+		980153676A9D4817BEF6CB97 /* EditQuickAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A238041BCCE47AFB606DD14 /* EditQuickAddView.swift */; };
 		1C34A58B7847BFCD85EA5687 /* FoodSuggestionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2C59EEF66A679DEFE8FC24 /* FoodSuggestionRow.swift */; };
 		27219EC3712F4D24CF551E06 /* GoalOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7FD944ED9D05EC5A06F566 /* GoalOptionRow.swift */; };
 		2AA6002FD9F449FA2DB8F2E7 /* FoodItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCE90DA79638C0041462DE /* FoodItem.swift */; };
@@ -59,7 +62,9 @@
 /* Begin PBXFileReference section */
 		02DB83A2FA82C9DD7BEE6260 /* PlanOptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanOptionCard.swift; sourceTree = "<group>"; };
 		0B8B3E28E613F6DCB5F720C2 /* StatTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTile.swift; sourceTree = "<group>"; };
+		0CFE09DDB227484C8324D115 /* QuickAddDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddDirectory.swift; sourceTree = "<group>"; };
 		0D6C0CD5C86923AD56705624 /* ProteinEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinEntry.swift; sourceTree = "<group>"; };
+		6A238041BCCE47AFB606DD14 /* EditQuickAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditQuickAddView.swift; sourceTree = "<group>"; };
 		0DB46934C10F0B00FED427BA /* SubscriptionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionStore.swift; sourceTree = "<group>"; };
 		0E2C59EEF66A679DEFE8FC24 /* FoodSuggestionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodSuggestionRow.swift; sourceTree = "<group>"; };
 		13715386477BB094119BB36D /* CustomFoodDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFoodDirectory.swift; sourceTree = "<group>"; };
@@ -77,6 +82,7 @@
 		58898C373BF5863A883EEE6C /* FoodDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodDatabase.swift; sourceTree = "<group>"; };
 		5E7FD944ED9D05EC5A06F566 /* GoalOptionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalOptionRow.swift; sourceTree = "<group>"; };
 		65C44E3CA16D10B4D0A41234 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		6D2E91B4A7C0583F1E90B4C7 /* GoalReachedCelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalReachedCelebrationView.swift; sourceTree = "<group>"; };
 		7DAE1684320A18A20F83851F /* HapticSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticSettings.swift; sourceTree = "<group>"; };
 		88B46035335051ECFF70348C /* LoggedEntryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedEntryRow.swift; sourceTree = "<group>"; };
 		8BD81CAD4CC1051D8FA49C35 /* MonthHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthHeatmapView.swift; sourceTree = "<group>"; };
@@ -191,7 +197,9 @@
 		732DAE85628E62091DE03516 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				6A238041BCCE47AFB606DD14 /* EditQuickAddView.swift */,
 				0E2C59EEF66A679DEFE8FC24 /* FoodSuggestionRow.swift */,
+				6D2E91B4A7C0583F1E90B4C7 /* GoalReachedCelebrationView.swift */,
 				88B46035335051ECFF70348C /* LoggedEntryRow.swift */,
 				DCE5C14B3453021FA1634D76 /* ProteinRingView.swift */,
 				4A762566DACEFA1DD529238E /* QuickAddTile.swift */,
@@ -226,6 +234,7 @@
 				91A32D11CA72E29A759C0D94 /* OnboardingState.swift */,
 				CF2977C5C7EC709F33CB8D71 /* ProteinDataExport.swift */,
 				EA5CFA3724850AA187A87F8D /* ProteinStore.swift */,
+				0CFE09DDB227484C8324D115 /* QuickAddDirectory.swift */,
 				0DB46934C10F0B00FED427BA /* SubscriptionStore.swift */,
 			);
 			path = Shared;
@@ -338,6 +347,7 @@
 				D69DD0F2835814C830DD0B4F /* Day1CheckInView.swift in Sources */,
 				CA3F739208B026AF9222AB8A /* DayDetailView.swift in Sources */,
 				A2883ABF526129CE4277CB80 /* DayTotal.swift in Sources */,
+				980153676A9D4817BEF6CB97 /* EditQuickAddView.swift in Sources */,
 				8CFE4B6012F3A1BCDD2ABE0B /* FoodDatabase.swift in Sources */,
 				90C7BAFCE95C42EE279ABE1E /* FoodEmoji.swift in Sources */,
 				2AA6002FD9F449FA2DB8F2E7 /* FoodItem.swift in Sources */,
@@ -345,6 +355,7 @@
 				76A0CC9DD3F5D63968735A7A /* FoodLookup.swift in Sources */,
 				1C34A58B7847BFCD85EA5687 /* FoodSuggestionRow.swift in Sources */,
 				27219EC3712F4D24CF551E06 /* GoalOptionRow.swift in Sources */,
+				1A8F3C92E4B06D17C5A8294E /* GoalReachedCelebrationView.swift in Sources */,
 				4B302763B407B6696A79E4B2 /* GoalSelectionView.swift in Sources */,
 				C484CD04999D47208CBE36C8 /* HapticSettings.swift in Sources */,
 				62496F27F3F8ED299B67A923 /* HomeTutorialView.swift in Sources */,
@@ -365,6 +376,7 @@
 				7EFC3EFC9255C7D6B3C31089 /* ProteinRingView.swift in Sources */,
 				BADB02E9DBF1268FDA89CCE7 /* ProteinStore.swift in Sources */,
 				1296DF190D322AD19ACF2319 /* ProteinTrackerApp.swift in Sources */,
+				52448FAD545D4A77AB20A8DC /* QuickAddDirectory.swift in Sources */,
 				19CBCA99F8AAF4B555ACB9BC /* QuickAddItem.swift in Sources */,
 				94793369C03B1F06E2DF1511 /* QuickAddTile.swift in Sources */,
 				B00CC2FCD2B499925C6EDC98 /* RootView.swift in Sources */,

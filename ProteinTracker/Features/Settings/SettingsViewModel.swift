@@ -6,6 +6,7 @@ final class SettingsViewModel {
     let store: ProteinStore
     let onboarding: OnboardingState
     let customFoods: CustomFoodDirectory
+    let quickAdd: QuickAddDirectory
     let appearance: AppearanceSettings
     let haptics: HapticSettings
     let engagement: AppEngagement
@@ -20,6 +21,7 @@ final class SettingsViewModel {
         store: ProteinStore,
         onboarding: OnboardingState,
         customFoods: CustomFoodDirectory,
+        quickAdd: QuickAddDirectory,
         appearance: AppearanceSettings,
         haptics: HapticSettings,
         engagement: AppEngagement
@@ -27,6 +29,7 @@ final class SettingsViewModel {
         self.store = store
         self.onboarding = onboarding
         self.customFoods = customFoods
+        self.quickAdd = quickAdd
         self.appearance = appearance
         self.haptics = haptics
         self.engagement = engagement
@@ -156,6 +159,7 @@ final class SettingsViewModel {
         store.dailyGoal = 150
         store.showsRemainingOnRing = true
         customFoods.removeAll()
+        quickAdd.resetToDefaults()
         AppHaptics.notification(.warning)
     }
 

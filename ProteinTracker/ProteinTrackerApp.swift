@@ -5,6 +5,7 @@ struct ProteinTrackerApp: App {
     @State private var store = ProteinStore.seeded
     @State private var onboarding = OnboardingState()
     @State private var customFoods = CustomFoodDirectory()
+    @State private var quickAdd = QuickAddDirectory()
     @State private var appearance = AppearanceSettings()
     @State private var haptics = HapticSettings()
     @State private var subscriptions = SubscriptionStore()
@@ -18,6 +19,7 @@ struct ProteinTrackerApp: App {
                     store: store,
                     onboarding: onboarding,
                     customFoods: customFoods,
+                    quickAdd: quickAdd,
                     appearance: appearance,
                     haptics: haptics,
                     subscriptions: subscriptions,

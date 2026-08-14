@@ -10,10 +10,47 @@ struct HomeView: View {
     @State private var editedGramsText = ""
     @State private var customNamePending: String?
     @State private var customProteinText = ""
+    @State private var showsGoalCelebration = false
+    @State private var showsEditQuickAdd = false
 
-    private let favouriteColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
+    private let favouriteColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 2)
 
     var body: some View {
+        homeContent
+            .alert("Edit grams", isPresented: isEditingEntry) {
+                editGramsAlert
+            } message: {
+                editGramsMessage
+            }
+            .alert("Protein in this food", isPresented: isCustomFoodPending) {
+                customFoodAlert
+            } message: {
+                customFoodMessage
+            }
+            .confirmationDialog(
+                entryPendingAction.map { "\($0.name)" } ?? "Entry",
+                isPresented: isEntryActionPending,
+                titleVisibility: .visible
+            ) {
+                entryActionButtons
+            } message: {
+                Text("Update the protein amount or remove this entry.")
+            }
+            .sheet(isPresented: $showsEditQuickAdd) {
+                EditQuickAddView(directory: viewModel.quickAdd, customFoods: viewModel.customFoods)
+            }
+    }
+
+    private var homeContent: some View {
+        scrollContent
+            .background(AppTheme.background)
+            .scrollDismissesKeyboard(.interactively)
+            .onChange(of: viewModel.hasReachedGoal, handleGoalReachedChange)
+            .overlay { goalCelebrationOverlay }
+            .animation(.smooth(duration: 0.3), value: showsGoalCelebration)
+    }
+
+    private var scrollContent: some View {
         ScrollView {
             VStack(spacing: 24) {
                 header
@@ -26,78 +63,92 @@ struct HomeView: View {
             .padding(.top, 4)
             .padding(.bottom, 32)
         }
-        .background(AppTheme.background)
-        .scrollDismissesKeyboard(.interactively)
-        .onChange(of: viewModel.hasReachedGoal) { _, reached in
-            guard reached, engagement.noteGoalReached() else { return }
-            requestReview()
+    }
+
+    @ViewBuilder
+    private var goalCelebrationOverlay: some View {
+        if showsGoalCelebration {
+            GoalReachedCelebrationView(streak: viewModel.streak, onDismiss: dismissGoalCelebration)
+                .transition(.opacity)
         }
-        .alert("Edit grams", isPresented: Binding(
+    }
+
+    private var isEditingEntry: Binding<Bool> {
+        Binding(
             get: { entryBeingEdited != nil },
             set: { if !$0 { entryBeingEdited = nil } }
-        )) {
-            TextField("Grams", text: $editedGramsText)
-                .keyboardType(.numberPad)
+        )
+    }
 
-            Button("Save") {
-                saveEditedGrams()
-            }
-
-            Button("Cancel", role: .cancel) {
-                entryBeingEdited = nil
-            }
-        } message: {
-            if let entry = entryBeingEdited {
-                Text("Update protein for \(entry.name).")
-            }
-        }
-        .alert("Protein in this food", isPresented: Binding(
+    private var isCustomFoodPending: Binding<Bool> {
+        Binding(
             get: { customNamePending != nil },
             set: { if !$0 { customNamePending = nil } }
-        )) {
-            TextField("Protein grams", text: $customProteinText)
-                .keyboardType(.numberPad)
+        )
+    }
 
-            Button("Add") {
-                saveCustomFood()
-            }
+    private var isEntryActionPending: Binding<Bool> {
+        Binding(
+            get: { entryPendingAction != nil },
+            set: { if !$0 { entryPendingAction = nil } }
+        )
+    }
 
-            Button("Cancel", role: .cancel) {
-                customNamePending = nil
-            }
-        } message: {
-            if let name = customNamePending {
-                Text("How much protein is in one serving of \(name)?")
+    @ViewBuilder
+    private var editGramsAlert: some View {
+        TextField("Grams", text: $editedGramsText)
+            .keyboardType(.numberPad)
+
+        Button("Save", action: saveEditedGrams)
+        Button("Cancel", role: .cancel) {
+            entryBeingEdited = nil
+        }
+    }
+
+    @ViewBuilder
+    private var editGramsMessage: some View {
+        if let entry = entryBeingEdited {
+            Text("Update protein for \(entry.name).")
+        }
+    }
+
+    @ViewBuilder
+    private var customFoodAlert: some View {
+        TextField("Protein grams", text: $customProteinText)
+            .keyboardType(.numberPad)
+
+        Button("Add", action: saveCustomFood)
+        Button("Cancel", role: .cancel) {
+            customNamePending = nil
+        }
+    }
+
+    @ViewBuilder
+    private var customFoodMessage: some View {
+        if let name = customNamePending {
+            Text("How much protein is in one serving of \(name)?")
+        }
+    }
+
+    @ViewBuilder
+    private var entryActionButtons: some View {
+        Button("Update grams") {
+            guard let entry = entryPendingAction else { return }
+            entryPendingAction = nil
+            Task { @MainActor in
+                beginEditing(entry)
             }
         }
-        .confirmationDialog(
-            entryPendingAction.map { "\($0.name)" } ?? "Entry",
-            isPresented: Binding(
-                get: { entryPendingAction != nil },
-                set: { if !$0 { entryPendingAction = nil } }
-            ),
-            titleVisibility: .visible
-        ) {
-            Button("Update grams") {
-                guard let entry = entryPendingAction else { return }
-                entryPendingAction = nil
-                Task { @MainActor in
-                    beginEditing(entry)
-                }
-            }
 
-            Button("Delete", role: .destructive) {
-                if let entry = entryPendingAction {
-                    viewModel.delete(entry)
-                }
-                entryPendingAction = nil
+        Button("Delete", role: .destructive) {
+            if let entry = entryPendingAction {
+                viewModel.delete(entry)
             }
+            entryPendingAction = nil
+        }
 
-            Button("Cancel", role: .cancel) {
-                entryPendingAction = nil
-            }
-        } message: {
-            Text("Update the protein amount or remove this entry.")
+        Button("Cancel", role: .cancel) {
+            entryPendingAction = nil
         }
     }
 
@@ -164,7 +215,20 @@ struct HomeView: View {
 
     private var quickAddSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("Quick add", subtitle: "Tap to add")
+            HStack(alignment: .top) {
+                sectionHeader("Quick add", subtitle: "Tap a portion to log it.")
+
+                Spacer(minLength: 8)
+
+                Button("Edit") {
+                    showsEditQuickAdd = true
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(AppTheme.forest)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
+                .glassEffect(.regular.interactive(), in: .capsule)
+            }
 
             LazyVGrid(columns: favouriteColumns, spacing: 8) {
                 ForEach(viewModel.favourites) { item in
@@ -315,6 +379,25 @@ struct HomeView: View {
                     .font(.caption)
                     .foregroundStyle(AppTheme.ink.opacity(0.5))
             }
+        }
+    }
+
+    private func handleGoalReachedChange(_: Bool, _ reached: Bool) {
+        guard reached, engagement.consumeGoalCelebration() else { return }
+        withAnimation(.smooth(duration: 0.3)) {
+            showsGoalCelebration = true
+        }
+    }
+
+    private func dismissGoalCelebration() {
+        withAnimation(.smooth(duration: 0.3)) {
+            showsGoalCelebration = false
+        }
+
+        guard engagement.noteGoalReached() else { return }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(400))
+            requestReview()
         }
     }
 
