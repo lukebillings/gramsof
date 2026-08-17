@@ -54,19 +54,6 @@ struct PaywallView: View {
             .controlSize(.small)
 
             Spacer()
-
-            Button {
-                viewModel.skipPaywall()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .padding(4)
-            }
-            .buttonStyle(.glass)
-            .tint(AppTheme.emerald)
-            .accessibilityLabel("Continue without purchasing")
-            .controlSize(.small)
-            .disabled(viewModel.subscriptions.isPurchasing)
         }
     }
 

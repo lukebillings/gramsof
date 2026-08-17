@@ -124,11 +124,6 @@ final class OnboardingViewModel {
         }
     }
 
-    /// Skip purchase and continue onboarding (e.g. during testing or soft paywall).
-    func skipPaywall() {
-        step = .dailyTarget
-    }
-
     func continueFromDailyTarget() {
         step = .notifications
     }
