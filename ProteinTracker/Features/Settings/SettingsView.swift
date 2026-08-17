@@ -229,7 +229,7 @@ struct SettingsView: View {
             Button {
                 viewModel.launchDay1CheckIn()
             } label: {
-                Label("Day 1 check-in", systemImage: "hand.wave")
+                Label("Check-in", systemImage: "hand.wave")
             }
 
             Button {
