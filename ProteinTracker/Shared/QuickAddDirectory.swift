@@ -18,7 +18,13 @@ final class QuickAddDirectory {
         if let data = defaults.data(forKey: Key.items),
            let decoded = try? JSONDecoder().decode([QuickAddItem].self, from: data),
            !decoded.isEmpty {
-            items = decoded
+            let migrated = Self.migratingEggsDefault(
+                in: Self.migratingGreekYogurtDefault(in: decoded)
+            )
+            items = migrated
+            if migrated != decoded {
+                persist()
+            }
         } else {
             items = QuickAddItem.defaults
         }
@@ -54,6 +60,36 @@ final class QuickAddDirectory {
     func resetToDefaults() {
         items = QuickAddItem.defaults
         persist()
+    }
+
+    /// Older installs used a 170g pot; keep the shortcut on 100g unless the user changed it.
+    private static func migratingGreekYogurtDefault(in items: [QuickAddItem]) -> [QuickAddItem] {
+        var didMigrate = false
+        let migrated = items.map { item -> QuickAddItem in
+            guard item.name.caseInsensitiveCompare("Greek yogurt") == .orderedSame,
+                  item.portionGrams == 170 else { return item }
+            var updated = item
+            updated.setPortionGrams(100)
+            didMigrate = true
+            return updated
+        }
+        return didMigrate ? migrated : items
+    }
+
+    /// Older installs used 2 large eggs; switch the default shortcut to 3 unless the user changed it.
+    private static func migratingEggsDefault(in items: [QuickAddItem]) -> [QuickAddItem] {
+        var didMigrate = false
+        let migrated = items.map { item -> QuickAddItem in
+            guard item.name.caseInsensitiveCompare("Eggs") == .orderedSame,
+                  item.detail.caseInsensitiveCompare("2 large eggs") == .orderedSame else { return item }
+            var updated = item
+            updated.detail = "3 large eggs"
+            updated.grams = 18
+            updated.portionGrams = 150
+            didMigrate = true
+            return updated
+        }
+        return didMigrate ? migrated : items
     }
 
     private func persist() {

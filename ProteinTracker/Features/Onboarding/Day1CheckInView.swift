@@ -37,7 +37,7 @@ struct Day1CheckInView: View {
                 .foregroundStyle(AppTheme.emerald)
                 .padding(.top, 8)
 
-            Text(phase == .ask ? "How’s day one going?" : "What would help?")
+            Text(phase == .ask ? "How’s it going?" : "What would help?")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(AppTheme.ink)
                 .multilineTextAlignment(.center)

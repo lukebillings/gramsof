@@ -39,11 +39,9 @@ struct QuickAddItem: Identifiable, Hashable, Codable {
         return raw.replacingOccurrences(of: "g of ", with: "g ", options: .caseInsensitive)
     }
 
-    /// Food name, or a count-based portion like "1 scoop" / "2 large eggs".
+    /// Portion as shown on the quick-add card, e.g. "100g Greek yogurt" or "1 scoop".
     var shortcutLabel: String {
-        if usesWeightLabel { return name }
-        if !detail.isEmpty { return detail }
-        return name
+        portionDescription
     }
 
     var canRecalculateProtein: Bool {
@@ -88,9 +86,9 @@ struct QuickAddItem: Identifiable, Hashable, Codable {
     static let defaults: [QuickAddItem] = [
         QuickAddItem(
             name: "Greek yogurt",
-            detail: "170g Greek yogurt",
-            grams: 17,
-            portionGrams: 170,
+            detail: "100g Greek yogurt",
+            grams: 10,
+            portionGrams: 100,
             proteinPer100g: 10
         ),
         QuickAddItem(
@@ -109,9 +107,9 @@ struct QuickAddItem: Identifiable, Hashable, Codable {
         ),
         QuickAddItem(
             name: "Eggs",
-            detail: "2 large eggs",
-            grams: 12,
-            portionGrams: 100,
+            detail: "3 large eggs",
+            grams: 18,
+            portionGrams: 150,
             proteinPer100g: 12
         )
     ]
