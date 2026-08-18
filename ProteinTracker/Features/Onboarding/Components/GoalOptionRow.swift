@@ -14,16 +14,9 @@ struct GoalOptionRow: View {
                     .frame(width: 42, height: 42)
                     .background(AppTheme.mint.opacity(isSelected ? 1 : 0.4), in: .circle)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(goal.title)
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(AppTheme.ink)
-
-                    Text(goal.detail)
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.ink.opacity(0.5))
-                        .multilineTextAlignment(.leading)
-                }
+                Text(goal.title)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(AppTheme.ink)
 
                 Spacer(minLength: 8)
 

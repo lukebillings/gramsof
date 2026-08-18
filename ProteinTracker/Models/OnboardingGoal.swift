@@ -17,15 +17,6 @@ enum OnboardingGoal: String, CaseIterable, Identifiable {
         }
     }
 
-    var detail: String {
-        switch self {
-        case .buildMuscle: "Hit a higher target to support your training."
-        case .loseFat: "Stay full and hold onto muscle in a deficit."
-        case .maintain: "Keep a steady intake, day after day."
-        case .feelHealthier: "Build one simple habit that sticks."
-        }
-    }
-
     var symbol: String {
         switch self {
         case .buildMuscle: "figure.strengthtraining.traditional"

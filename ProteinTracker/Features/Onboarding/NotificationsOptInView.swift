@@ -47,7 +47,6 @@ struct NotificationsOptInView: View {
         VStack(spacing: 12) {
             reminderOption(
                 title: "Yes, remind me",
-                detail: "Daily at 6pm — change the time in Settings",
                 symbol: "bell.badge.fill",
                 isSelected: viewModel.remindersEnabled
             ) {
@@ -56,7 +55,6 @@ struct NotificationsOptInView: View {
 
             reminderOption(
                 title: "Not now",
-                detail: "You can turn this on later in Settings",
                 symbol: "bell.slash.fill",
                 isSelected: !viewModel.remindersEnabled
             ) {
@@ -67,7 +65,6 @@ struct NotificationsOptInView: View {
 
     private func reminderOption(
         title: String,
-        detail: String,
         symbol: String,
         isSelected: Bool,
         action: @escaping () -> Void
@@ -79,15 +76,9 @@ struct NotificationsOptInView: View {
                     .foregroundStyle(isSelected ? AppTheme.emerald : AppTheme.ink.opacity(0.35))
                     .frame(width: 28)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(AppTheme.ink)
-
-                    Text(detail)
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.ink.opacity(0.55))
-                }
+                Text(title)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(AppTheme.ink)
 
                 Spacer(minLength: 0)
 
