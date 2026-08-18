@@ -119,6 +119,13 @@ final class OnboardingViewModel {
         step = .notifications
     }
 
+    #if DEBUG
+    /// Lets you continue onboarding without buying, in development builds only.
+    func skipPaywall() {
+        step = .dailyTarget
+    }
+    #endif
+
     func backToGoal() {
         step = .goal
     }
