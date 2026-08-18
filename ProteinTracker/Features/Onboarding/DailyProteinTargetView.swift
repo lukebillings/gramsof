@@ -34,15 +34,9 @@ struct DailyProteinTargetView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("What's your daily protein target?")
-                .font(.system(size: 34, weight: .bold, design: .rounded))
-                .foregroundStyle(AppTheme.ink)
-
-            Text(viewModel.suggestedRangeLabel)
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.ink.opacity(0.55))
-        }
+        Text("What's your daily protein target?")
+            .font(.system(size: 34, weight: .bold, design: .rounded))
+            .foregroundStyle(AppTheme.ink)
     }
 
     private var targetCard: some View {
@@ -60,10 +54,6 @@ struct DailyProteinTargetView: View {
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(AppTheme.ink.opacity(0.45))
             }
-
-            Text("Type your target · \(viewModel.goalRange.lowerBound)–\(viewModel.goalRange.upperBound)g")
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(AppTheme.ink.opacity(0.45))
 
             Text(LegalLinks.proteinTargetDisclaimer)
                 .font(.caption)

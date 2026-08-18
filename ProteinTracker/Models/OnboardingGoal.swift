@@ -5,6 +5,7 @@ enum OnboardingGoal: String, CaseIterable, Identifiable {
     case loseFat
     case maintain
     case feelHealthier
+    case other
 
     var id: String { rawValue }
 
@@ -14,6 +15,7 @@ enum OnboardingGoal: String, CaseIterable, Identifiable {
         case .loseFat: "Lose fat"
         case .maintain: "Maintain weight"
         case .feelHealthier: "Eat healthier"
+        case .other: "Other"
         }
     }
 
@@ -23,6 +25,7 @@ enum OnboardingGoal: String, CaseIterable, Identifiable {
         case .loseFat: "figure.run"
         case .maintain: "scalemass.fill"
         case .feelHealthier: "heart.fill"
+        case .other: "ellipsis.circle.fill"
         }
     }
 }

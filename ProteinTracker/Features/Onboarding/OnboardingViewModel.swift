@@ -76,16 +76,7 @@ final class OnboardingViewModel {
         case .loseFat: return 150
         case .maintain: return 150
         case .feelHealthier: return 130
-        }
-    }
-
-    var suggestedRangeLabel: String {
-        guard let selectedGoal else { return "60–300g" }
-        switch selectedGoal {
-        case .buildMuscle: return "Often 160–180g for building muscle"
-        case .loseFat: return "Often 140–160g while losing fat"
-        case .maintain: return "Around 150g works well to maintain"
-        case .feelHealthier: return "Often 120–140g to eat healthier"
+        case .other: return 150
         }
     }
 
