@@ -15,7 +15,7 @@ struct FoodSuggestion: Identifiable, Hashable {
 /// Matches typed text against `FoodDatabase` and works out how much protein the
 /// amount described adds up to.
 enum FoodLookup {
-    private static let maxResults = 4
+    private static let maxResults = 8
     private static let minimumQueryLength = 2
     private static let weightUnits = ["grams", "gram", "g", "ml"]
 

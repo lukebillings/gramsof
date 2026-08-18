@@ -5,7 +5,7 @@ struct ProteinRingView: View {
     let goal: Int
     let progress: Double
 
-    private let lineWidth: CGFloat = 24
+    private let lineWidth: CGFloat = 18
 
     var body: some View {
         ZStack {
@@ -22,16 +22,16 @@ struct ProteinRingView: View {
 
             VStack(spacing: 2) {
                 Text("\(total)")
-                    .font(.system(size: 68, weight: .bold, design: .rounded))
+                    .font(.system(size: 52, weight: .bold, design: .rounded))
                     .foregroundStyle(AppTheme.ink)
                     .contentTransition(.numericText())
 
                 Text("of \(goal)g")
-                    .font(.headline)
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.ink.opacity(0.5))
             }
         }
-        .frame(width: 220, height: 220)
+        .frame(width: 168, height: 168)
         .animation(.smooth, value: progress)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Protein today")

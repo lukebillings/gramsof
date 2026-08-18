@@ -11,12 +11,13 @@ struct MonthHeatmapView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 6) {
+            LazyVGrid(columns: columns, spacing: 6) {
                 ForEach(Array(weekdayLabels.enumerated()), id: \.offset) { _, label in
                     Text(label)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(AppTheme.ink.opacity(0.4))
                         .frame(maxWidth: .infinity)
+                        .multilineTextAlignment(.center)
                 }
             }
 
@@ -31,16 +32,16 @@ struct MonthHeatmapView: View {
     }
 
     private var legend: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             Text("Less")
                 .font(.caption2)
                 .foregroundStyle(AppTheme.ink.opacity(0.4))
 
             ForEach(legendSteps, id: \.progress) { step in
-                VStack(spacing: 3) {
+                VStack(spacing: 4) {
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
                         .fill(fill(for: step.progress))
-                        .frame(width: 12, height: 12)
+                        .frame(width: 14, height: 14)
                         .overlay {
                             if step.progress == 0 {
                                 RoundedRectangle(cornerRadius: 4, style: .continuous)
@@ -49,16 +50,18 @@ struct MonthHeatmapView: View {
                         }
 
                     Text(step.label)
-                        .font(.system(size: 8, weight: .medium))
+                        .font(.system(size: 9, weight: .medium).monospacedDigit())
                         .foregroundStyle(AppTheme.ink.opacity(0.4))
+                        .lineLimit(1)
                 }
+                .frame(width: 36)
             }
 
             Text("Goal")
                 .font(.caption2)
                 .foregroundStyle(AppTheme.ink.opacity(0.4))
         }
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .frame(maxWidth: .infinity)
         .padding(.top, 4)
     }
 

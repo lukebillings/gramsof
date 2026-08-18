@@ -191,7 +191,7 @@ struct HomeView: View {
     // MARK: - Ring
 
     private var ringCard: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 10) {
             ProteinRingView(
                 total: viewModel.total,
                 goal: viewModel.goal,
@@ -207,7 +207,7 @@ struct HomeView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 28)
+        .padding(.vertical, 16)
         .glassEffect(.regular, in: .rect(cornerRadius: 32))
     }
 

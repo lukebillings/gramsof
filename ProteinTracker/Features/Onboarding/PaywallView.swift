@@ -31,7 +31,7 @@ struct PaywallView: View {
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)
-            .padding(.bottom, 88)
+            .padding(.bottom, 16)
         }
         .safeAreaInset(edge: .bottom) { checkoutBar }
         .task {
@@ -106,15 +106,43 @@ struct PaywallView: View {
 
     private var plansSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ForEach(viewModel.offers) { offer in
-                PlanOptionCard(
-                    offer: offer,
-                    isSelected: viewModel.selectedPlan == offer.plan
-                ) {
-                    viewModel.select(productID: offer.id)
+            if viewModel.offers.isEmpty {
+                plansPlaceholder
+            } else {
+                ForEach(viewModel.offers) { offer in
+                    PlanOptionCard(
+                        offer: offer,
+                        isSelected: viewModel.selectedPlan == offer.plan
+                    ) {
+                        viewModel.select(productID: offer.id)
+                    }
                 }
             }
         }
+    }
+
+    private var plansPlaceholder: some View {
+        VStack(spacing: 10) {
+            if viewModel.subscriptions.isLoading {
+                ProgressView()
+                    .tint(AppTheme.emerald)
+            } else {
+                Text("Plans appear here once the App Store responds.")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(AppTheme.ink.opacity(0.55))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button("Try again") {
+                    Task { await viewModel.reloadSubscriptions() }
+                }
+                .font(.subheadline.weight(.semibold))
+                .tint(AppTheme.emerald)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 104)
+        .padding(16)
+        .glassEffect(.regular, in: .rect(cornerRadius: 22))
     }
 
     private var checkoutBar: some View {
@@ -124,14 +152,6 @@ struct PaywallView: View {
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.red.opacity(0.85))
                     .multilineTextAlignment(.center)
-
-                if viewModel.selectedProduct == nil, viewModel.subscriptions.loadError != nil {
-                    Button("Try again") {
-                        Task { await viewModel.subscriptions.loadProducts() }
-                    }
-                    .font(.caption.weight(.semibold))
-                    .tint(AppTheme.emerald)
-                }
             }
 
             HStack(spacing: 6) {
@@ -169,6 +189,11 @@ struct PaywallView: View {
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 8)
+        .background {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .ignoresSafeArea(edges: .bottom)
+        }
     }
 
     private var isCheckoutBusy: Bool {

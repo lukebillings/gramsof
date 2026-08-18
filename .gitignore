@@ -16,3 +16,5 @@ xcuserdata/
 
 # macOS
 .DS_Store
+.venv-img/
+.u2net/

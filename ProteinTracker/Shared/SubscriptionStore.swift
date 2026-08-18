@@ -3,7 +3,8 @@ import Observation
 import StoreKit
 
 /// Loads subscription products from App Store Connect via StoreKit 2 and tracks
-/// the current entitlement. Paywall rows are hardcoded in `SubscriptionOffer`.
+/// the current entitlement. Paywall rows are built from these products by
+/// `SubscriptionOffer.offers(from:)`.
 @Observable
 @MainActor
 final class SubscriptionStore {
@@ -34,9 +35,6 @@ final class SubscriptionStore {
             let loaded = try await Product.products(for: SubscriptionPlan.productIDs)
             products = loaded.sorted { lhs, rhs in
                 rank(for: lhs.id) < rank(for: rhs.id)
-            }
-            if products.isEmpty {
-                loadError = "Subscriptions aren’t available right now. Try again later."
             }
         } catch {
             loadError = error.localizedDescription

@@ -40,7 +40,7 @@ final class OnboardingViewModel {
     }
 
     var offers: [SubscriptionOffer] {
-        SubscriptionOffer.all
+        SubscriptionOffer.offers(from: subscriptions.products)
     }
 
     var selectedPlan: SubscriptionPlan {
@@ -95,6 +95,21 @@ final class OnboardingViewModel {
         if subscriptions.products.isEmpty {
             await subscriptions.loadProducts()
         }
+        alignSelectionWithLoadedOffers()
+    }
+
+    func reloadSubscriptions() async {
+        await subscriptions.loadProducts()
+        alignSelectionWithLoadedOffers()
+    }
+
+    /// App Store Connect may return only some of the plans, so keep the
+    /// selection on a plan the user can actually buy.
+    private func alignSelectionWithLoadedOffers() {
+        guard let first = offers.first else { return }
+        if !offers.contains(where: { $0.id == selectedProductID }) {
+            selectedProductID = first.id
+        }
     }
 
     func continueFromPaywall() async {
@@ -104,7 +119,7 @@ final class OnboardingViewModel {
         }
 
         if selectedProduct == nil {
-            await subscriptions.loadProducts()
+            await reloadSubscriptions()
         }
 
         guard let product = selectedProduct else { return }
